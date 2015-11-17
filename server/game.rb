@@ -39,6 +39,8 @@ class Game
       puts "Team 2 has won!"
       @turn_log << "WIN_2"
     end
+
+    save_game
   end
 
   def generate_map
@@ -99,6 +101,14 @@ class Game
   end
 
   def save_game
+    file = File.new("game.txt", "w+")
 
+    log = ""
+    for data in @turn_log
+      log += data.to_s
+    end
+
+    file.puts(log)
+    file.close
   end
 end
