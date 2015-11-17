@@ -49,7 +49,10 @@ class Team
       when "STRAFE_RIGHT"
         @ap -= $MOVEMENT_COST
         @bots[bot_number].strafe_right
-      when /TEST/
+      when "SHOOT"
+        @ap -= $SHOOT_COST
+        @bots[bot_number].shoot
+      when /TURN/
         degrees = action.split(" ").to_i
         @ap -= degrees - $TURN_COST
         @bots[bot_number].turn(degrees)
