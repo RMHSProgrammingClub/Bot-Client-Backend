@@ -22,9 +22,17 @@ class Game
   def run_turn
     i = 0
 
-    while i < $NUM_BOTS
-      @com1.take_turn(i, @map)
-      @com2.take_turn(i, @map)
+    while !@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
+      while i < $NUM_BOTS
+        @com1.take_turn(i, @map)
+        @com2.take_turn(i, @map)
+      end
+    end
+
+    if !@team1.flag.is_captured(@map)
+      puts "Team 1 has won!"
+    else
+      puts "Team 2 has won!"
     end
   end
 
@@ -56,8 +64,8 @@ class Game
   def spawn_flags
     flags = Array.new
 
-    flags[0] = Flag.new($MAP_WIDTH / 2, 1)
-    flags[1] = Flag.new($MAP_WIDTH / 2, $MAP_HEIGHT - 2) # -2 should put the flag above the wall
+    flags[0] = Flag.new($MAP_WIDTH / 2, 1, 1)
+    flags[1] = Flag.new($MAP_WIDTH / 2, $MAP_HEIGHT - 2, 2) # -2 should put the flag above the wall
 
     @map[flags[0].x][flags[0].y] = flags[0]
     @map[flags[1].x][flags[1].y] = flags[1]
