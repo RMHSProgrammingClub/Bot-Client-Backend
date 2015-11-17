@@ -2,12 +2,14 @@ require_relative 'constants.rb'
 require_relative 'ai.rb'
 require_relative 'team.rb'
 require_relative 'block.rb'
+require_relative 'flag.rb'
 
 class Game
   def initialize (com1_file, com2_file)
     @map = generate_map
-    @team1 = Team.new(1)
-    @team2 = Team.new(2)
+    flags = spawn_flags
+    @team1 = Team.new(1, flags[0])
+    @team2 = Team.new(2, flags[1])
     @com1 = AI.new(com1_file, @team1)
     @com2 = AI.new(com2_file, @team2)
   end
@@ -49,6 +51,18 @@ class Game
     #TODO: Build stars
 
     new_map
+  end
+
+  def spawn_flags
+    flags = Array.new
+
+    flags[0] = Flag.new($MAP_WIDTH / 2, 1)
+    flags[1] = Flag.new($MAP_WIDTH / 2, $MAP_HEIGHT - 2) # -2 should put the flag above the wall
+
+    @map[flags[0].x][flags[0].y] = flags[0]
+    @map[flags[1].x][flags[1].y] = flags[1]
+
+    flags
   end
 
   #Turn map into drawable format

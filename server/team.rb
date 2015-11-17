@@ -2,12 +2,13 @@ require_relative 'constants.rb'
 require_relative 'bot.rb'
 
 class Team
-  attr_reader :number, :bots, :ap
+  attr_reader :number, :bots, :ap, :flag
 
-  def initialize (number)
+  def initialize (number, flag)
     @number = number
     @bots = spawn_bots
-    @ap = $ACTION_POINTs
+    @ap = $ACTION_POINTS
+    @flag = flag
   end
 
   def spawn_bots
