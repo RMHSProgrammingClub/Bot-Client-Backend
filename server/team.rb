@@ -29,8 +29,12 @@ class Team
     bot_team
   end
 
-  def check_bot_action
+  def check_bot_action (bot_number, command)
     #TODO: Implement action check
+  end
+
+  def reset
+    @ap = $ACTION_POINTS
   end
 
   # Command and ap requirement is already checked

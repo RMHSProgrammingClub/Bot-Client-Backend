@@ -15,22 +15,13 @@ class AI
   end
 
   def take_turn (bot_number, map)
-    # ["START_TURN", bot_number, x, y, angle, [vision], "END_DATA"]
-    data = ["START_TURN"]
-    data << bot_number.to_s
-    data << @team.bots[bot_number].x
-    data << @team.bots[bot_number].y
-    data << @team.bots[bot_number].angle
-    data << $ACITON_POINTS
-    @team.bots[bot_number].calculate_vision(map)
-    data << process_vision(@team.bots[bot_number].vision)
-    data << "END_DATA"
+    @team.reset
 
+    # ["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
+    data = populate_movement_data(bot_number, map)
     send_data(data)
 
-    commands_number = read_line.to_i #TODO: Check response for number
-    i = 0
-    while i < commands_number
+    while @team.ap > 0
       command = read_line
 
       is_valid = @team.check_bot_action(bot_number, command)
@@ -39,11 +30,26 @@ class AI
       end
 
       @team.execute_bot_action(bot_number, command)
-      i += 1
+      data = populate_movement_data(bot_number, map)
+      send_data(data) #Send data like new vision back to ai
     end
   end
 
   private
+  def populate_movement_data (bot_number, map)
+    data = ["START_DATA"]
+    data << bot_number.to_s
+    data << @team.bots[bot_number].x
+    data << @team.bots[bot_number].y
+    data << @team.bots[bot_number].angle
+    data << @team.ap
+    @team.bots[bot_number].calculate_vision(map)
+    data << process_vision(@team.bots[bot_number].vision)
+    data << "END_DATA"
+
+    data
+  end
+
   def send_data (data)
     for line in data
       if line.is_a? Array
