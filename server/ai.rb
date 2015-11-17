@@ -8,6 +8,7 @@ class AI
 
   def start
     quick_write("START")
+    quick_write(@team)
   end
 
   def stop
@@ -15,6 +16,7 @@ class AI
   end
 
   def take_turn (bot_number, map, turn_log)
+    quick_write("START_TURN")
     @team.reset
 
     # ["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
@@ -43,20 +45,21 @@ class AI
 
   private
   def populate_movement_data (bot_number, map)
-    data = ["START_DATA"]
-    data << bot_number.to_s
+    data = Array.new
     data << @team.bots[bot_number].x
     data << @team.bots[bot_number].y
     data << @team.bots[bot_number].angle
+    data << @team.bots[bot_number].health
     data << @team.ap
     @team.bots[bot_number].calculate_vision(map)
     data << process_vision(@team.bots[bot_number].vision)
-    data << "END_DATA"
 
     data
   end
 
   def send_data (data)
+    sent_data = Array.new
+
     for line in data
       if line.is_a? Array
         array = Array.new
@@ -64,12 +67,13 @@ class AI
           array << cell.to_s
         end
 
-        write(array)
+        sent_data << array
       else
-        write(line)
+        sent_data << line
       end
     end
 
+    write(sent_data.to_s)
     flush
   end
 
@@ -77,13 +81,13 @@ class AI
     array = Array.new
     for entity in vision_array
       entry = Array.new
-      entry << entity.x.to_s
-      entry << entity.y.to_s
+      entry << entity.x
+      entry << entity.y
 
       if entity.is_a? Bot
-        entry << "BOT"
+        entry << 1 #1 for bot
       elsif entity.is_a? Block
-        entry << "BLOCK"
+        entry << 2 #2 for block
       end
 
       array << entry

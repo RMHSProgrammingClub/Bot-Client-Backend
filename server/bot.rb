@@ -32,30 +32,30 @@ class Bot
 
     case @angle
       when 315..360
-        start_x = @x - 1
+        start_x = @x - $BOT_VISION
         start_y = @y
-        end_x = @x + 1
+        end_x = @x + $BOT_VISION
         end_y = 0
       when 0..45 #Like -45 to 45
-        start_x = @x - 1
+        start_x = @x - $BOT_VISION
         start_y = @y
-        end_x = @x + 1
+        end_x = @x + $BOT_VISION
         end_y = 0
       when 45..135
         start_x = @x
-        start_y = @y - 1
-        end_x = $MAP_WIDTH - 1
-        end_y = @y + 1
+        start_y = @y - $BOT_VISION
+        end_x = $MAP_WIDTH - $BOT_VISION
+        end_y = @y + $BOT_VISION
       when 135..225
-        start_x = @x - 1
+        start_x = @x - $BOT_VISION
         start_y = @y
-        end_x = @x + 1
-        end_y = $MAP_HEIGHT - 1
+        end_x = @x + $BOT_VISION
+        end_y = $MAP_HEIGHT - $BOT_VISION
       when 225..315
         start_x = @x
-        start_y = @y - 1
+        start_y = @y - $BOT_VISION
         end_x = 0
-        end_y = @y + 1
+        end_y = @y + $BOT_VISION
       else
         #this is bad
     end
