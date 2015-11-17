@@ -1,10 +1,11 @@
 require_relative 'constants.rb'
 
 class Bot
-  attr_reader :team, :x, :y, :angle, :vision
+  attr_reader :team, :health, :x, :y, :angle, :vision
 
   def initialize (team, x, y)
     @team = team
+    @health = $BOT_HEALTH
     @x = x
     @y = y
 
@@ -13,6 +14,12 @@ class Bot
     else
       @angle = 360
     end
+  end
+
+  #TODO: Implement freezing and thawing
+
+  def hit
+    @health -= $BLOCK_HIT_LOSS
   end
 
   def calculate_vision (map)
@@ -79,7 +86,28 @@ class Bot
   end
 
   def shoot (map)
-    #TODO: Implement shooting logic
+    nx = Math.cos(angle);
+    ny = Math.sin(angle);
+    is_hit = false
+
+    bullet_x = @x
+    while bullet_x < $MAP_WIDTH
+      bullet_y = @y
+      while bullet_y < $MAP_HEIGHT
+        if  map[bullet_x][bullet_y].is_a? Bot or  map[bullet_x][bullet_y].is_a? Block
+          map[bullet_x][bullet_y].hit #Same method for Bot and Block
+          is_hit = true
+        end
+
+        bullet_y += 1
+      end
+
+      if is_hit
+        break
+      end
+
+      bullet_x += 1
+    end
   end
 
   private

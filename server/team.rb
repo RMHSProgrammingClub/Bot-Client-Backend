@@ -22,7 +22,7 @@ class Team
 
     i = 0
     while i <= $NUM_BOTS
-      bot_team[i] = Bot.new(@number, i * 50, y) #TODO: Settle on i coefficient
+      bot_team[i] = Bot.new(@number, i * $BOT_SPACING, y)
       i += 1
     end
 
