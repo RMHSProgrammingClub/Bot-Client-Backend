@@ -5,6 +5,7 @@ require_relative 'block.rb'
 require_relative 'flag.rb'
 
 class Game
+  attr_reader :turn_log
   def initialize (com1_file, com2_file)
     @map = generate_map
     flags = spawn_flags
@@ -12,6 +13,7 @@ class Game
     @team2 = Team.new(2, flags[1])
     @com1 = AI.new(com1_file, @team1)
     @com2 = AI.new(com2_file, @team2)
+    @turn_log = Array.new
   end
 
   def start
@@ -24,15 +26,18 @@ class Game
 
     while !@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
       while i < $NUM_BOTS
-        @com1.take_turn(i, @map)
-        @com2.take_turn(i, @map)
+        @turn_log = @com1.take_turn(i, @map, @turn_log) #Turn log must be updated with any shoot commands
+        @turn_log = @com2.take_turn(i, @map, @turn_log)
+        proccess_map
       end
     end
 
     if !@team1.flag.is_captured(@map)
       puts "Team 1 has won!"
+      @turn_log << "WIN_1"
     else
       puts "Team 2 has won!"
+      @turn_log << "WIN_2"
     end
   end
 
@@ -75,23 +80,25 @@ class Game
 
   #Turn map into drawable format
   def proccess_map
-    @drawable_map = Array.new
+    new_drawable_map = Array.new
 
     @map.each_with_index do |row, x|
-      @drawable_map[x] = Array.new
+      new_drawable_map[x] = Array.new
       @map.each_with_index do |cell, y|
         if cell == 0
-          @drawable_map[x][y] = "0"
+          new_drawable_map[x][y] = "0"
         elsif cell.is_a? Bot
-          @drawable_map[x][y] = "BOT"
+          new_drawable_map[x][y] = "BOT"
         elsif cell.isa? Block
-          @drawable_map[x][y] = "BLOCK"
+          new_drawable_map[x][y] = "BLOCK"
         end
       end
     end
+
+    @turn_log << new_drawable_map
   end
 
-  def print_drawable_map
-    puts @drawable_map.to_s
+  def save_game
+
   end
 end

@@ -14,7 +14,7 @@ class AI
     @bot_process.close
   end
 
-  def take_turn (bot_number, map)
+  def take_turn (bot_number, map, turn_log)
     @team.reset
 
     # ["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
@@ -29,9 +29,15 @@ class AI
         abort("Command: #{command} is not valid!")
       end
 
+      if command == "SHOOT"
+        turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
+      end
+
       @team.execute_bot_action(bot_number, command)
       data = populate_movement_data(bot_number, map)
       send_data(data) #Send data like new vision back to ai
+
+      turn_log
     end
   end
 
