@@ -78,22 +78,30 @@ class AI
   end
 
   def process_vision (vision_array)
-    array = Array.new
+    output = ""
     for entity in vision_array
-      entry = Array.new
-      entry << entity.x
-      entry << entity.y
+      entry = "["
+      entry << entity.x.to_s + ","
+      entry << entity.y.to_s + ","
+      entry << entity.angle.to_s + ","
+      entry << entity.health.to_s + ","
 
       if entity.is_a? Bot
-        entry << 1 #1 for bot
+        entry << 1.to_s #1 for bot
       elsif entity.is_a? Block
-        entry << 2 #2 for block
+        if entity.is_breakable
+          entry << 3.to_s #3 for block
+        else
+          entry << 2.to_s #2 for wall
+        end
       end
 
-      array << entry
+      output << "," + entry
     end
 
-    array
+    output << "]"
+    output.sub!(",", "")
+    output
   end
 
   def read_line
