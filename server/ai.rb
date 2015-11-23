@@ -31,11 +31,11 @@ class AI
         abort("Command: #{command} is not valid!")
       end
 
+      @team.execute_bot_action(bot_number, command)
       if command == "SHOOT"
         turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
       end
 
-      @team.execute_bot_action(bot_number, command)
       data = populate_movement_data(bot_number, map)
       send_data(data) #Send data like new vision back to ai
 
@@ -83,10 +83,10 @@ class AI
       entry = "["
       entry << entity.x.to_s + ","
       entry << entity.y.to_s + ","
-      entry << entity.angle.to_s + ","
       entry << entity.health.to_s + ","
 
       if entity.is_a? Bot
+        entry << entity.angle.to_s + ","
         entry << 1.to_s #1 for bot
       elsif entity.is_a? Block
         if entity.is_breakable

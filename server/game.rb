@@ -34,10 +34,10 @@ class Game
 
     if !@team1.flag.is_captured(@map)
       puts "Team 1 has won!"
-      @turn_log << "WIN_1"
+      @turn_log << "WIN1"
     else
       puts "Team 2 has won!"
-      @turn_log << "WIN_2"
+      @turn_log << "WIN2"
     end
 
     save_game
@@ -82,22 +82,59 @@ class Game
 
   #Turn map into drawable format
   def proccess_map
+    #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall
     new_drawable_map = Array.new
 
     @map.each_with_index do |row, x|
       new_drawable_map[x] = Array.new
       @map.each_with_index do |cell, y|
         if cell == 0
-          new_drawable_map[x][y] = "0"
+          new_drawable_map[x][y] = "0" #Nothing
         elsif cell.is_a? Bot
-          new_drawable_map[x][y] = "BOT"
-        elsif cell.isa? Block
-          new_drawable_map[x][y] = "BLOCK"
+          new_drawable_map[x][y] = "1" #Bot
+          #TODO: Get robots team
+        elsif cell.is_a? Block
+          if cell.is_breakable
+            new_drawable_map[x][y] = "3" #Block
+          else
+            new_drawable_map[x][y] = "4" #Wall
+          end
         end
       end
     end
 
     @turn_log << new_drawable_map
+  end
+
+  def process_turn_log
+    string_turn_log = ""
+
+    i = 0
+    while i < @turn_log.length
+      string_turn_log << process_turn_log_map(@turn_log[i]) + "\n"
+      i += 1
+
+      shot_log = ""
+      while @turn_log[i][1] == "SHOOT"
+        shot_log << " " + process_turn_log_shot(@turn_log[i])
+        i += 1
+      end
+
+      shot_log.sub!(" ", "") #Remove start space
+      string_turn_log << shot_log + "\n"
+    end
+
+    string_turn_log
+  end
+
+  def process_turn_log_map (turn)
+    for point in turn
+
+    end
+  end
+
+  def process_turn_log_shot (turn)
+
   end
 
   def save_game

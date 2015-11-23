@@ -64,21 +64,9 @@ class Bot
   end
 
   #All actions assume that AP has already been calculated
-  def move_forward
-    case @angle
-      when 315..360
-        @x += 1
-      when 0..45 #Like -45 to 45
-        @x += 1
-      when 45..135
-        @y += 1
-      when 135..225
-        @x -= 1
-      when 225..315
-        @y -= 1
-      else
-        #pls no
-    end
+  def move (x, y)
+    @x += x
+    @y += y
   end
 
   def turn (degrees)

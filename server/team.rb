@@ -41,15 +41,11 @@ class Team
   # Command and ap requirement is already checked
   def execute_bot_action (bot_number, action)
     case action
-      when "FORWARD"
+      when /MOVE/
         @ap -= $MOVEMENT_COST
-        @bots[bot_number].move_forward
-      when "STRAFE_LEFT"
-        @ap -= $MOVEMENT_COST
-        @bots[bot_number].strafe_left
-      when "STRAFE_RIGHT"
-        @ap -= $MOVEMENT_COST
-        @bots[bot_number].strafe_right
+        @x = action.split(" ")[1]
+        @y = action.split(" ")[2]
+        @bots[bot_number].move(x, y)
       when "SHOOT"
         @ap -= $SHOOT_COST
         @bots[bot_number].shoot
