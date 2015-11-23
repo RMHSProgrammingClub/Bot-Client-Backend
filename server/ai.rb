@@ -23,7 +23,7 @@ class AI
     data = populate_movement_data(bot_number, map)
     send_data(data)
 
-    while @team.ap > 0
+    while gets.chomp != "END" and @team.ap > 0
       command = read_line
 
       is_valid = @team.check_bot_action(bot_number, command)
@@ -38,9 +38,11 @@ class AI
 
       data = populate_movement_data(bot_number, map)
       send_data(data) #Send data like new vision back to ai
-
-      turn_log
     end
+
+    @team.reset
+
+    turn_log
   end
 
   private
@@ -58,8 +60,6 @@ class AI
   end
 
   def send_data (data)
-    sent_data = Array.new
-
     for line in data
       if line.is_a? Array
         array = Array.new
@@ -67,13 +67,12 @@ class AI
           array << cell.to_s
         end
 
-        sent_data << array
+        write(array)
       else
-        sent_data << line
+        write(line)
       end
     end
 
-    write(sent_data.to_s)
     flush
   end
 
@@ -105,7 +104,7 @@ class AI
   end
 
   def read_line
-    @bot_process.gets
+    @bot_process.gets.chomp
   end
 
   def quick_write (text)

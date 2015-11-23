@@ -32,6 +32,7 @@ class Team
 
   def check_bot_action (bot_number, command)
     #TODO: Implement action check
+    true
   end
 
   def reset
@@ -43,8 +44,8 @@ class Team
     case action
       when /MOVE/
         @ap -= $MOVEMENT_COST
-        @x = action.split(" ")[1]
-        @y = action.split(" ")[2]
+        x = action.split(" ")[1].to_i
+        y = action.split(" ")[2].to_i
         @bots[bot_number].move(x, y)
       when "SHOOT"
         @ap -= $SHOOT_COST
