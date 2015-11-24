@@ -22,13 +22,14 @@ class Game
   end
 
   def run_turn
-    i = 0
-
     while !@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
+      i = 0
       while i < $NUM_BOTS
         @turn_log = @com1.take_turn(i, @map, @turn_log) #Turn log must be updated with any shoot commands
         @turn_log = @com2.take_turn(i, @map, @turn_log)
         proccess_map
+
+        i += 1
       end
     end
 

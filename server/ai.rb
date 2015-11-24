@@ -1,8 +1,10 @@
+require 'pry'
+
 require_relative 'constants.rb'
 
 class AI
   def initialize (file, team)
-    @bot_process = IO.popen("ruby #{file}", 'r+')
+    @bot_process = IO.popen("ruby #{file} > #{team.number.to_s}_log.txt", "r+")
     @team = team
   end
 
@@ -19,16 +21,21 @@ class AI
     quick_write("START_TURN")
     @team.reset
 
-    #["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
     data = populate_movement_data(bot_number, map)
     send_data(data)
 
+    #sleep 1
+    #turn_file = open("#{@team.number.to_s}", "r")
+
     command = ""
     while command != "END" and @team.ap > 0
-      command = read_line
+      #["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
 
-      is_valid = @team.check_bot_action(bot_number, command)
-      if !is_valid
+      #command = turn_file.gets
+      command = read_line
+      puts "TEST"
+
+      if !@team.check_bot_action(bot_number, command)
         abort("Command: #{command} is not valid!")
       end
 
@@ -36,9 +43,6 @@ class AI
       if command == "SHOOT"
         turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
       end
-
-      data = populate_movement_data(bot_number, map)
-      send_data(data) #Send data like new vision back to ai
     end
 
     turn_log
