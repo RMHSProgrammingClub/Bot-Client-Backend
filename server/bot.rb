@@ -1,7 +1,7 @@
 require_relative 'constants.rb'
 
 class Bot
-  attr_reader :team, :health, :x, :y, :angle, :vision
+  attr_reader :team, :health, :x, :y, :angle, :vision, :is_dead
 
   def initialize (team, x, y)
     @team = team
@@ -20,6 +20,10 @@ class Bot
 
   def hit
     @health -= $BLOCK_HIT_LOSS
+
+    if @health <= 0
+      is_dead = true
+    end
   end
 
   def calculate_vision (map)
@@ -64,9 +68,11 @@ class Bot
   end
 
   #All actions assume that AP has already been calculated
-  def move (x, y)
-    @x += x
-    @y += y
+  def move (x, y, map)
+    if !map[@x + x][@y + y].is_a? Block and !map[@x + x][@y + y].is_a? Bot #Don't move through walls and bots
+      @x += x
+      @y += y
+    end
   end
 
   def turn (degrees)

@@ -8,7 +8,7 @@ class AI
 
   def start
     quick_write("START")
-    quick_write(@team)
+    quick_write(@team.number)
   end
 
   def stop
@@ -19,11 +19,12 @@ class AI
     quick_write("START_TURN")
     @team.reset
 
-    # ["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
+    #["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
     data = populate_movement_data(bot_number, map)
     send_data(data)
 
-    while gets.chomp != "END" and @team.ap > 0
+    command = ""
+    while command != "END" and @team.ap > 0
       command = read_line
 
       is_valid = @team.check_bot_action(bot_number, command)
@@ -31,7 +32,7 @@ class AI
         abort("Command: #{command} is not valid!")
       end
 
-      @team.execute_bot_action(bot_number, command)
+      @team.execute_bot_action(bot_number, command, map)
       if command == "SHOOT"
         turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
       end
@@ -39,8 +40,6 @@ class AI
       data = populate_movement_data(bot_number, map)
       send_data(data) #Send data like new vision back to ai
     end
-
-    @team.reset
 
     turn_log
   end
@@ -60,20 +59,14 @@ class AI
   end
 
   def send_data (data)
+    to_send = ""
     for line in data
-      if line.is_a? Array
-        array = Array.new
-        for cell in line
-          array << cell.to_s
-        end
-
-        write(array)
-      else
-        write(line)
-      end
+      to_send << "," + line.to_s
     end
 
-    flush
+    to_send.sub!(",", "") #Remove first comma
+
+    quick_write(to_send)
   end
 
   def process_vision (vision_array)
@@ -84,7 +77,7 @@ class AI
       entry << entity.y.to_s + ","
       entry << entity.health.to_s + ","
 
-      if entity.is_a? Bot
+      if entity.is_a? Bot and entity.is_dead
         entry << entity.angle.to_s + ","
         entry << 1.to_s #1 for bot
       elsif entity.is_a? Block
@@ -95,10 +88,9 @@ class AI
         end
       end
 
-      output << "," + entry
+      output << "," + entry + "]"
     end
 
-    output << "]"
     output.sub!(",", "")
     output
   end

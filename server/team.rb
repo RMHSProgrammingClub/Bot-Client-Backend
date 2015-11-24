@@ -40,13 +40,13 @@ class Team
   end
 
   # Command and ap requirement is already checked
-  def execute_bot_action (bot_number, action)
+  def execute_bot_action (bot_number, action, map)
     case action
       when /MOVE/
         @ap -= $MOVEMENT_COST
         x = action.split(" ")[1].to_i
         y = action.split(" ")[2].to_i
-        @bots[bot_number].move(x, y)
+        @bots[bot_number].move(x, y, map)
       when "SHOOT"
         @ap -= $SHOOT_COST
         @bots[bot_number].shoot
