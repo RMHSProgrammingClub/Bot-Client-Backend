@@ -1,39 +1,33 @@
-require 'pry'
+require 'socket'
 
 require_relative 'constants.rb'
 
 class AI
-  def initialize (file, team)
-    @bot_process = IO.popen("ruby #{file} > #{team.number.to_s}_log.txt", "r+")
+  def initialize (socket, team)
+    @bot_socket = socket
     @team = team
   end
 
   def start
-    quick_write("START")
-    quick_write(@team.number)
+    @bot_client = @bot_socket.accept
+    write("START")
+    write(@team.number.to_s)
   end
 
   def stop
-    @bot_process.close
+    @bot_client.close
   end
 
   def take_turn (bot_number, map, turn_log)
-    quick_write("START_TURN")
+    write("START_TURN")
     @team.reset
 
     data = populate_movement_data(bot_number, map)
     send_data(data)
 
-    #sleep 1
-    #turn_file = open("#{@team.number.to_s}", "r")
-
     command = ""
     while command != "END" and @team.ap > 0
-      #["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
-
-      #command = turn_file.gets
       command = read_line
-      puts "TEST"
 
       if !@team.check_bot_action(bot_number, command)
         abort("Command: #{command} is not valid!")
@@ -50,6 +44,8 @@ class AI
 
   private
   def populate_movement_data (bot_number, map)
+    #["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
+
     data = Array.new
     data << @team.bots[bot_number].x
     data << @team.bots[bot_number].y
@@ -70,7 +66,7 @@ class AI
 
     to_send.sub!(",", "") #Remove first comma
 
-    quick_write(to_send)
+    write(to_send)
   end
 
   def process_vision (vision_array)
@@ -100,19 +96,10 @@ class AI
   end
 
   def read_line
-    @bot_process.gets.chomp
-  end
-
-  def quick_write (text)
-    write(text)
-    flush
+    @bot_client.gets.chomp
   end
 
   def write (text)
-    @bot_process.puts(text)
-  end
-
-  def flush
-    @bot_process.flush
+    @bot_client.puts(text)
   end
 end

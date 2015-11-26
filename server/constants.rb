@@ -1,3 +1,4 @@
+$SOCKET_PORT = 2000
 $MAP_WIDTH = 256
 $MAP_HEIGHT = 512
 $BOT_SPACING = 50 #TODO: Settle on correct coefficient (preferably scale)

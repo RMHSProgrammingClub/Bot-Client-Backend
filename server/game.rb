@@ -6,13 +6,15 @@ require_relative 'flag.rb'
 
 class Game
   attr_reader :turn_log
-  def initialize (com1_file, com2_file)
+  def initialize
+    @server_socket = TCPServer.open("localhost", $SOCKET_PORT)
+
     @map = generate_map
     flags = spawn_flags
     @team1 = Team.new(1, flags[0])
     @team2 = Team.new(2, flags[1])
-    @com1 = AI.new(com1_file, @team1)
-    @com2 = AI.new(com2_file, @team2)
+    @com1 = AI.new(@server_socket, @team1)
+    @com2 = AI.new(@server_socket, @team2)
     @turn_log = Array.new
   end
 

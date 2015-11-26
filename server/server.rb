@@ -2,8 +2,7 @@ require 'optparse'
 
 require_relative 'game.rb'
 
-# Main
-game = Game.new(ARGV[0], ARGV[1])
+game = Game.new
 puts "Server started"
 
 game.start
