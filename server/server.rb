@@ -8,8 +8,6 @@ puts "Server started"
 game.start
 puts "Match started"
 
-i = 0
-while i < 10
-  puts "Running turn " + i.to_s
-  game.run_turn
-end
+
+puts "Running game"
+game.run
