@@ -1,18 +1,19 @@
-class Flag
-  attr_reader :x, :y, :team
+require_relative 'entity.rb'
+
+class Flag < Entity
+  attr_reader :team
   def initialize (x, y, team)
-    @x = x
-    @y = y
     @team = team
+
+    super(x, y, 0, 0, false, false)
   end
 
-  def is_captured(map)
-    #TODO: Implement capture logic
-    points = get_surronding_points
+  def is_captured (map)
+    entities = map.get_surronding_entities(@x, @y)
 
     surronding_bots = 0
-    for point in points
-      if map[point[0]][point[1]].is_a? Bot
+    for entity in entities
+      if map.get(entity.x, entity.y).is_a? Bot
         surronding_bots += 1
       end
     end
@@ -22,25 +23,5 @@ class Flag
     else
       false
     end
-  end
-
-  private
-  def get_surronding_points
-    points = Array.new
-
-    points[0] = [x - 1, y]
-    points[1] = [x + 1, y]
-
-    if @team == 1
-      points[2] = [x - 1, y + 1]
-      points[3] = [x + 1, y + 1]
-      points[4] = [x, y + 1]
-    elsif @team == 2
-      points[2] = [x - 1, y - 1]
-      points[3] = [x + 1, y - 1]
-      points[4] = [x, y - 1]
-    end
-
-    points
   end
 end

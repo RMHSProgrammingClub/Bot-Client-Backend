@@ -80,12 +80,10 @@ class AI
       if entity.is_a? Bot and entity.is_dead
         entry << entity.angle.to_s + ","
         entry << 1.to_s #1 for bot
+      elsif entity.is_a? Wall
+        entry << 2.to_s #2 for wall
       elsif entity.is_a? Block
-        if entity.is_breakable
-          entry << 3.to_s #3 for block
-        else
-          entry << 2.to_s #2 for wall
-        end
+        entry << 3.to_s #3 for block
       end
 
       output << "," + entry + "]"

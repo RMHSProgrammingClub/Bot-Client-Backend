@@ -1,18 +1,8 @@
+require_relative 'entity.rb'
 require_relative 'constants.rb'
 
-class Block
-  attr_reader :x, :y, :health, :is_breakable
-
-  def initialize (x, y, is_breakable)
-    @x = x
-    @y = y
-    @is_breakable = is_breakable
-    @health = $BLOCK_HEALTH
-  end
-
-  def hit
-    if @is_breakable
-      @health -= $BLOCK_HIT_LOSS
-    end
+class Block < Entity
+  def initialize (x, y, is_destroyable)
+    super(x, y, 0, $BLOCK_HEALTH, is_destroyable, false)
   end
 end

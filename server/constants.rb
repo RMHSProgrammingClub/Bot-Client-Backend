@@ -1,8 +1,8 @@
 $SOCKET_PORT = 2000
-$MAP_WIDTH = 256
-$MAP_HEIGHT = 512
+$MAP_WIDTH = 64
+$MAP_HEIGHT = 128
 $MAX_TURNS = 100
-$BOT_SPACING = 50 #TODO: Settle on correct coefficient (preferably scale)
+$BOT_SPACING = 10 #TODO: Settle on correct coefficient (preferably scale)
 $NUM_BOTS = 5
 $ACTION_POINTS = 10
 $BOT_HEALTH = 100

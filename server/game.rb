@@ -1,18 +1,16 @@
 require_relative 'constants.rb'
 require_relative 'ai.rb'
 require_relative 'team.rb'
-require_relative 'block.rb'
-require_relative 'flag.rb'
+require_relative 'map.rb'
 
 class Game
   attr_reader :turn_log
   def initialize
     @server_socket = TCPServer.open("localhost", $SOCKET_PORT) # This is creates a socket server
 
-    @map = generate_map
-    flags = spawn_flags
-    @team1 = Team.new(1, flags[0])
-    @team2 = Team.new(2, flags[1])
+    @map = Map.new
+    @team1 = Team.new(1, @map.get_bots(1), @map.get_flag(1))
+    @team2 = Team.new(2, @map.get_bots(2), @map.get_flag(2))
     @com1 = AI.new(@server_socket, @team1)
     @com2 = AI.new(@server_socket, @team2)
     @turn_log = Array.new
@@ -59,88 +57,13 @@ class Game
     i = 0
     while i < $NUM_BOTS
       @turn_log = @com1.take_turn(i, @map, @turn_log) #Turn log must be updated with any shoot commands
-      proccess_map
+      @turn_log << @map.to_string
 
       @turn_log = @com2.take_turn(i, @map, @turn_log)
-      proccess_map
+      @turn_log << @map.to_string
 
       i += 1
     end
-  end
-
-  def generate_map
-    new_map = Array.new
-
-    #Build empty space
-    x = 0
-    while x < $MAP_WIDTH
-      new_map[x] = Array.new
-
-      y = 0
-      while y < $MAP_HEIGHT
-        new_map[x][y] = 0
-        y += 1
-      end
-
-      x += 1
-    end
-
-    #Build top and bottom barriers
-    i = 0
-    while i < $MAP_WIDTH
-      new_map[i][0] = Block.new(i, 0, false)
-      new_map[i][$MAP_WIDTH - 1] = Block.new(i, $MAP_WIDTH - 1, false)
-      i += 1
-    end
-
-    #Build side barriers
-    i = 0
-    while i < $MAP_HEIGHT
-      new_map[0][i] = Block.new(0, i, false)
-      new_map[$MAP_WIDTH - 1][i] = Block.new($MAP_WIDTH - 1, i, false)
-      i += 1
-    end
-
-    #TODO: Build stars
-
-    new_map
-  end
-
-  def spawn_flags
-    flags = Array.new
-
-    flags[0] = Flag.new($MAP_WIDTH / 2, 1, 1)
-    flags[1] = Flag.new($MAP_WIDTH / 2, $MAP_HEIGHT - 2, 2) # -2 should put the flag above the wall
-
-    @map[flags[0].x][flags[0].y] = flags[0]
-    @map[flags[1].x][flags[1].y] = flags[1]
-
-    flags
-  end
-
-  #Turn map into drawable format
-  #This is really slow right now
-  def proccess_map
-    #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall
-    new_drawable_map = ""
-
-    for row in @map
-      for cell in row
-        if cell == 0
-          new_drawable_map << "0" #Nothing
-        elsif cell.is_a? Bot
-          new_drawable_map << cell.team.to_s #Bot can be 1 or 2 depending on team number
-        elsif cell.is_a? Block
-          if cell.is_breakable
-            new_drawable_map << "3" #Block
-          else
-            new_drawable_map << "4" #Wall
-          end
-        end
-      end
-    end
-
-    @turn_log << new_drawable_map
   end
 
   def process_turn_log

@@ -1,29 +1,18 @@
+require_relative 'entity.rb'
 require_relative 'constants.rb'
 
-class Bot
-  attr_reader :team, :health, :x, :y, :angle, :vision, :is_dead
+class Bot < Entity
+  attr_reader :team, :vision
 
   def initialize (team, x, y)
     @team = team
-    @health = $BOT_HEALTH
-    @x = x
-    @y = y
 
+    angle = 360
     if @team == 1
-      @angle = 180
-    else
-      @angle = 360
+      angle = 180
     end
-  end
 
-  #TODO: Implement freezing and thawing
-
-  def hit
-    @health -= $BLOCK_HIT_LOSS
-
-    if @health <= 0
-      is_dead = true
-    end
+    super(x, y, angle, $BOT_HEALTH, true, false)
   end
 
   def calculate_vision (map)
@@ -69,7 +58,7 @@ class Bot
 
   #All actions assume that AP has already been calculated
   def move (x, y, map)
-    if !map[@x + x][@y + y].is_a? Block and !map[@x + x][@y + y].is_a? Bot #Don't move through walls and bots
+    if !map.get(@x + x, @y + y).is_ghost
       @x += x
       @y += y
     end
@@ -88,8 +77,8 @@ class Bot
     while bullet_x < $MAP_WIDTH
       bullet_y = @y
       while bullet_y < $MAP_HEIGHT
-        if  map[bullet_x][bullet_y].is_a? Bot or  map[bullet_x][bullet_y].is_a? Block
-          map[bullet_x][bullet_y].hit #Same method for Bot and Block
+        if map.get(bullet_x, bullet_y).is_destroyable
+          map.get(bullet_x, bullet_y).hit
           is_hit = true
         end
 
@@ -108,7 +97,7 @@ class Bot
   def create_vision_box (start_x, start_y, end_x, end_y, map)
     box = Array.new
 
-    map.each_with_index do |row, x|
+    map.map_array.each_with_index do |row, x|
       row.each_with_index do |cell, y|
 
         if x > start_x and x < end_x and y > start_y and y > end_y
