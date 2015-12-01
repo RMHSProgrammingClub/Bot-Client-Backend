@@ -77,7 +77,7 @@ class AI
       entry << entity.y.to_s + ","
       entry << entity.health.to_s + ","
 
-      if entity.is_a? Bot and entity.is_dead
+      if entity.is_a? Bot and entity.is_destroyed
         entry << entity.angle.to_s + ","
         entry << 1.to_s #1 for bot
       elsif entity.is_a? Wall

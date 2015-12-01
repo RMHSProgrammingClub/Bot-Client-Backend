@@ -6,7 +6,7 @@ require_relative 'map.rb'
 class Game
   attr_reader :turn_log
   def initialize
-    @server_socket = TCPServer.open("localhost", $SOCKET_PORT) # This is creates a socket server
+    @server_socket = TCPServer.new($SOCKET_PORT) # This is creates a socket server
 
     @map = Map.new
     @team1 = Team.new(1, @map.get_bots(1), @map.get_flag(1))

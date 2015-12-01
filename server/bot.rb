@@ -20,7 +20,7 @@ class Bot < Entity
 
     current_angle = @angle - ($FOV / 2)
     while current_angle < @angle + ($FOV / 2)
-      entity = cast_line(current_angle, @x, @y)
+      entity = cast_line(current_angle, @x, @y, map)
       if !@vision.include?(entity)
         @vision << entity
       end
@@ -42,7 +42,7 @@ class Bot < Entity
   end
 
   def shoot (map)
-    entity = cast_line(@sangle, @x, @y)
+    entity = cast_line(@sangle, @x, @y, map)
 
     if !entity.nil?
       entity.hit
@@ -54,7 +54,7 @@ class Bot < Entity
     degrees * Math::PI / 180 
   end
 
-  def cast_line (angle, x, y)
+  def cast_line (angle, x, y, map)
     nx = Math.cos(to_radians(angle))
     ny = -Math.sin(to_radians(angle))
     is_hit = false
