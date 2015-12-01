@@ -69,8 +69,8 @@ class Bot < Entity
   end
 
   def shoot (map)
-    nx = Math.cos(angle);
-    ny = Math.sin(angle);
+    nx = Math.cos(to_radians(angle))
+    ny = -Math.sin(to_radians(angle))
     is_hit = false
 
     bullet_x = @x
@@ -94,6 +94,10 @@ class Bot < Entity
   end
 
   private
+  def to_radians (degrees)
+    degrees * Math::PI / 180 
+  end
+
   def create_vision_box (start_x, start_y, end_x, end_y, map)
     box = Array.new
 
