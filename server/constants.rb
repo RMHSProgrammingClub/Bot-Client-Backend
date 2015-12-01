@@ -4,6 +4,7 @@ $MAP_HEIGHT = 128
 $MAX_TURNS = 100
 $BOT_SPACING = 10 #TODO: Settle on correct coefficient (preferably scale)
 $NUM_BOTS = 5
+$FOV = 90
 $ACTION_POINTS = 10
 $BOT_HEALTH = 100
 $BLOCK_HEALTH = 10

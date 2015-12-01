@@ -16,44 +16,17 @@ class Bot < Entity
   end
 
   def calculate_vision (map)
-    #TODO: Implement raycasting crap
-    #Temporarily just making a box
-    start_x = 0
-    start_y = 0
-    end_x = 0
-    end_y = 0
+    @vision = Array.new
 
-    case @angle
-      when 315..360
-        start_x = @x - $BOT_VISION
-        start_y = @y
-        end_x = @x + $BOT_VISION
-        end_y = 0
-      when 0..45 #Like -45 to 45
-        start_x = @x - $BOT_VISION
-        start_y = @y
-        end_x = @x + $BOT_VISION
-        end_y = 0
-      when 45..135
-        start_x = @x
-        start_y = @y - $BOT_VISION
-        end_x = $MAP_WIDTH - $BOT_VISION
-        end_y = @y + $BOT_VISION
-      when 135..225
-        start_x = @x - $BOT_VISION
-        start_y = @y
-        end_x = @x + $BOT_VISION
-        end_y = $MAP_HEIGHT - $BOT_VISION
-      when 225..315
-        start_x = @x
-        start_y = @y - $BOT_VISION
-        end_x = 0
-        end_y = @y + $BOT_VISION
-      else
-        #this is bad
+    current_angle = @angle - ($FOV / 2)
+    while current_angle < @angle + ($FOV / 2)
+      entity = cast_line(current_angle, @x, @y)
+      if !@vision.include?(entity)
+        @vision << entity
+      end
+
+      current_angle += 1
     end
-
-    @vision = create_vision_box(start_x, start_y, end_x, end_y, map)
   end
 
   #All actions assume that AP has already been calculated
@@ -69,27 +42,10 @@ class Bot < Entity
   end
 
   def shoot (map)
-    nx = Math.cos(to_radians(angle))
-    ny = -Math.sin(to_radians(angle))
-    is_hit = false
+    entity = cast_line(@sangle, @x, @y)
 
-    bullet_x = @x
-    while bullet_x < $MAP_WIDTH
-      bullet_y = @y
-      while bullet_y < $MAP_HEIGHT
-        if map.get(bullet_x, bullet_y).is_destroyable
-          map.get(bullet_x, bullet_y).hit
-          is_hit = true
-        end
-
-        bullet_y += 1
-      end
-
-      if is_hit
-        break
-      end
-
-      bullet_x += 1
+    if !entity.nil?
+      entity.hit
     end
   end
 
@@ -98,20 +54,25 @@ class Bot < Entity
     degrees * Math::PI / 180 
   end
 
-  def create_vision_box (start_x, start_y, end_x, end_y, map)
-    box = Array.new
+  def cast_line (angle, x, y)
+    nx = Math.cos(to_radians(angle))
+    ny = -Math.sin(to_radians(angle))
+    is_hit = false
 
-    map.map_array.each_with_index do |row, x|
-      row.each_with_index do |cell, y|
-
-        if x > start_x and x < end_x and y > start_y and y > end_y
-          if cell.is_a? Bot or cell.is_a? Block
-            box << cell
-          end
+    line_x = x
+    while line_x < $MAP_WIDTH
+      line_y = y
+      while line_y < $MAP_HEIGHT
+        if map.get(line_x, line_y).is_a? Entity
+          return map.get(line_x, line_y)
         end
+
+        line_y += 1
       end
+
+      line_x += 1
     end
 
-    box
+    return nil
   end
 end
