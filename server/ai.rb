@@ -78,12 +78,12 @@ class AI
       entry << entity.health.to_s + ","
 
       if entity.is_a? Bot and entity.is_destroyed
-        entry << entity.angle.to_s + ","
-        entry << 1.to_s #1 for bot
+        entry << entity.team.number.to_s #1 or 2 for bot
+        #entry << entity.angle.to_s + ","
       elsif entity.is_a? Wall
-        entry << 2.to_s #2 for wall
+        entry << 3.to_s #2 for wall
       elsif entity.is_a? Block
-        entry << 3.to_s #3 for block
+        entry << 4.to_s #3 for block
       end
 
       output << "," + entry + "]"
