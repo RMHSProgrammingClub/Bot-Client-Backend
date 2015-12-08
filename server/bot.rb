@@ -31,7 +31,7 @@ class Bot < Entity
 
   #All actions assume that AP has already been calculated
   def move (x, y, map)
-    if !map.get(@x + x, @y + y).is_ghost
+    if map.get(@x + x, @y + y).is_ghost
       @x += x
       @y += y
     end

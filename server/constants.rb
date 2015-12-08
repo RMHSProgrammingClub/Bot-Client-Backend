@@ -1,6 +1,6 @@
 $SOCKET_PORT = 2000
-$MAP_WIDTH = 64
-$MAP_HEIGHT = 128
+$MAP_WIDTH = 128
+$MAP_HEIGHT = 64
 $MAX_TURNS = 100
 $MAX_MANA = 100
 $BOT_SPACING = 10 #TODO: Settle on correct coefficient (preferably scale)

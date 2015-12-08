@@ -57,21 +57,7 @@ class Map
   end
 
   def generate_map
-    new_map = Array.new
-
-    #Build empty space
-    x = 0
-    while x < $MAP_WIDTH
-      new_map[x] = Array.new
-
-      y = 0
-      while y < $MAP_HEIGHT
-        new_map[x][y] = Air.new(x, y)
-        y += 1
-      end
-
-      x += 1
-    end
+    new_map = generate_empty_map
 
     new_map = generate_walls(new_map)
     new_map = generate_blocks(new_map)
@@ -80,6 +66,23 @@ class Map
     @bots, new_map = spawn_bots(new_map)
 
     new_map
+  end
+
+  def update_map
+    new_map = generate_empty_map
+    mew_map = generate_walls(new_map)
+
+    for flag in @flags
+      new_map[flag.x][flag.y] = flag
+    end
+
+    for bot_team in @bots
+      for bot in bot_team
+        new_map[bot.x][bot.y] = bot
+      end
+    end
+
+    @map_array = new_map
   end
 
   def to_string
@@ -104,12 +107,32 @@ class Map
   end
 
   private
+  def generate_empty_map
+    new_map = Array.new
+
+    #Build empty space
+    x = 0
+    while x < $MAP_WIDTH
+      new_map[x] = Array.new
+
+      y = 0
+      while y < $MAP_HEIGHT
+        new_map[x][y] = Air.new(x, y)
+        y += 1
+      end
+
+      x += 1
+    end
+
+    new_map
+  end
+
   def generate_walls (map)
     #Build top and bottom walls
     x = 0
     while x < $MAP_WIDTH
       map[x][0] = Wall.new(x, 0)
-      map[x][$MAP_WIDTH - 1] = Wall.new(x, $MAP_WIDTH - 1)
+      map[x][$MAP_HEIGHT - 1] = Wall.new(x, $MAP_HEIGHT - 1)
       x += 1
     end
 
@@ -149,8 +172,8 @@ class Map
 
     i = 0
     while i < $NUM_BOTS
-      bots[0][i] = Bot.new(1, i * $BOT_SPACING, $BOT_SPACING)
-      bots[1][i] = Bot.new(2, i * $BOT_SPACING, $MAP_WIDTH - $BOT_SPACING)
+      bots[0][i] = Bot.new(1, (i + 1) * $BOT_SPACING, $BOT_SPACING)
+      bots[1][i] = Bot.new(2, (i + 1) * $BOT_SPACING, $MAP_HEIGHT - $BOT_SPACING)
 
       map[bots[0][i].x][bots[0][i].y] = bots[0][i]
       map[bots[1][i].x][bots[1][i].y] = bots[1][i]

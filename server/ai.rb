@@ -39,6 +39,8 @@ class AI
       end
     end
 
+    map.update_map
+
     turn_log
   end
 
