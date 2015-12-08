@@ -52,8 +52,8 @@ class Map
     entities
   end
 
-  def set (x, y)
-    @map_array[x][y]
+  def set (x, y, value)
+    @map_array[x][y] = value
   end
 
   def generate_map

@@ -49,6 +49,10 @@ class Bot < Entity
     end
   end
 
+  def place_block (map, x, y)
+    map.set(@x + x, @y + y, Block.new(@x + x, @y + y, true))
+  end
+
   private
   def to_radians (degrees)
     degrees * Math::PI / 180 
