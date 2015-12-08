@@ -44,13 +44,15 @@ class Bot < Entity
   def shoot (map)
     entity = cast_line(@sangle, @x, @y, map)
 
-    if !entity.nil?
+    if !entity.nil? and entity.team != @team
       entity.hit
     end
   end
 
   def place_block (map, x, y)
-    map.set(@x + x, @y + y, Block.new(@x + x, @y + y, true))
+    if map.get(@x + x, @y + y).is_ghost
+      map.set(@x + x, @y + y, Block.new(@x + x, @y + y, true))
+    end
   end
 
   private

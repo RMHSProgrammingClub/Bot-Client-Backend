@@ -78,7 +78,9 @@ class Map
 
     for bot_team in @bots
       for bot in bot_team
-        new_map[bot.x][bot.y] = bot
+        if bot.is_destroyed
+          new_map[bot.x][bot.y] = bot
+        end
       end
     end
 
@@ -173,7 +175,7 @@ class Map
     i = 0
     while i < $NUM_BOTS
       bots[0][i] = Bot.new(1, (i + 1) * $BOT_SPACING, $BOT_SPACING)
-      bots[1][i] = Bot.new(2, (i + 1) * $BOT_SPACING, $MAP_HEIGHT - $BOT_SPACING)
+      bots[1][i] = Bot.new(2, (i + 1) + 5 * $BOT_SPACING, $MAP_HEIGHT - $BOT_SPACING)
 
       map[bots[0][i].x][bots[0][i].y] = bots[0][i]
       map[bots[1][i].x][bots[1][i].y] = bots[1][i]

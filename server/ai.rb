@@ -74,25 +74,25 @@ class AI
   def process_vision (vision_array)
     output = ""
     for entity in vision_array
-      entry = "["
+      entry = ""
 
       if entity.is_a? Bot and entity.is_destroyed
-        entry << entity.team.number.to_s #1 or 2 for bot
+        entry << entity.team.number.to_s + "," #1 or 2 for bot
       elsif entity.is_a? Wall
-        entry << 3.to_s #3 for wall
+        entry << 3.to_s + "," #3 for wall
       elsif entity.is_a? Block
-        entry << 4.to_s #4 for block
+        entry << 4.to_s + "," #4 for block
       end
 
       entry << entity.x.to_s + ","
       entry << entity.y.to_s + ","
       entry << entity.angle.to_s + ","
-      entry << entity.health.to_s + ","
+      entry << entity.health.to_s
 
-      output << "," + entry + "]"
+      output << "," + entry
     end
-
     output.sub!(",", "")
+
     output
   end
 

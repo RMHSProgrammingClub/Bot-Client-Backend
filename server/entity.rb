@@ -19,6 +19,7 @@ class Entity
 
       if @health <= 0
         @is_destroyed = true
+        @is_ghost = true
       end
     end
   end

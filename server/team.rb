@@ -19,6 +19,7 @@ class Team
 
   def reset
     @ap = $ACTION_POINTS
+    @mana += $MANA_PER_TURN
   end
 
   # Command and ap requirement is already checked
@@ -36,11 +37,15 @@ class Team
         degrees = action.split(" ").to_i
         @ap -= degrees - $TURN_COST
         @bots[bot_number].turn(degrees)
-      when "PLACE"
+      when /PLACE/
         @ap -= $PLACE_COST
-        @bots[bot_number].place_block(map)
+        @mana -= $PLACE_MANA_COST
+        x = action.split(" ")[1].to_i
+        y = action.split(" ")[2].to_i
+        @bots[bot_number].place_block(map, x, y)
       when "SPAWN"
         @ap -= $SPAWN_COST
+        @mana -= $SPAWN_MANA_COST
         spawn_bot(@map)
       else
         #My god...
@@ -57,5 +62,6 @@ class Team
     bot = Bot.new(@number, $MAP_WIDTH / 2, yPos)
     @bots << bot
     @map.set($MAP_WIDTH / 2, yPos, bot)
+    @map.bot << bot
   end
 end
