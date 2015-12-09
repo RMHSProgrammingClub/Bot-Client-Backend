@@ -112,8 +112,10 @@ class Bot < Entity
   # map = the global map object
   # returns the first solid entity to be hit
   def cast_line (angle, x, y, map)
-    nx = Math.cos(to_radians(angle))
-    ny = -Math.sin(to_radians(angle))
+    #nx = Math.cos(to_radians(angle))
+    #ny = -Math.sin(to_radians(angle))
+    nx = Math.sin(to_radians(angle))
+    ny = Math.cos(to_radians(angle))
 
     line_x = x
     while line_x < $MAP_WIDTH
@@ -124,10 +126,10 @@ class Bot < Entity
           return map.get(line_x, line_y)
         end
 
-        line_y += 1
+        line_y += 1 * ny
       end
 
-      line_x += 1
+      line_x += 1 * nx
     end
 
     return nil

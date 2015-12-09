@@ -186,8 +186,8 @@ class Map
 
     i = 0
     while i < $NUM_BOTS
-      bots[0][i] = Bot.new(1, (i + 1) * $BOT_SPACING, $BOT_SPACING)
-      bots[1][i] = Bot.new(2, ((i + 1) * $BOT_SPACING) + 5, $MAP_HEIGHT - $BOT_SPACING)
+      bots[0][i] = Bot.new(1, $BOT_SPACING, (i + 1) * $BOT_SPACING - 2)
+      bots[1][i] = Bot.new(2, $MAP_WIDTH - $BOT_SPACING, ((i + 1) * $BOT_SPACING) + 2)
 
       map[bots[0][i].x][bots[0][i].y] = bots[0][i]
       map[bots[1][i].x][bots[1][i].y] = bots[1][i]
