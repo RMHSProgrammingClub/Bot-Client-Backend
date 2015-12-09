@@ -72,20 +72,13 @@ class Map
     new_map
   end
 
-  def update_map
-    for row in @map_array
-      for entity in row
-        entity.update(self)
-      end
-    end
-  end
-
-  def to_string
+  def update
     #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall, 5 = flag
     new_drawable_map = ""
 
     for row in @map_array
       for cell in row
+        cell.update(self)
         new_drawable_map << cell.to_number.to_s
       end
     end

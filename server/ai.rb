@@ -25,7 +25,7 @@ class AI
 
     bot = @team.bots[bot_number]
     bot.calculate_vision(map)
-    @connection.send_data(bot, @team)
+    @connection.send_data(bot, @team.ap)
 
     command = ""
     while command != "END" and @team.ap > 0
@@ -40,8 +40,7 @@ class AI
         turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
       end
 
-      map.update_map
-      turn_log << map.to_string
+      turn_log << map.update
     end
 
     turn_log
