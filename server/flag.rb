@@ -1,13 +1,22 @@
 require_relative 'entity.rb'
 
+# The flag class. Each team has one
 class Flag < Entity
   attr_reader :team
+
+  # Class initializer
+  # x = starting x position
+  # y = starting y position
+  # team = the team number of the bot
   def initialize (x, y, team)
     @team = team
 
     super(x, y, 0, 0, false, false)
   end
 
+  # Checks if the flag has been captured
+  # map = the global class object
+  # returns weither the flag has been captured or not
   def is_captured (map)
     entities = map.get_surronding_entities(@x, @y)
 
@@ -25,6 +34,8 @@ class Flag < Entity
     end
   end
 
+  # Used when turning the map into a string. Each entity has their own number
+  # returns 5
   def to_number
     5
   end

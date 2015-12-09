@@ -1,9 +1,14 @@
 require_relative 'constants.rb'
 require_relative 'bot.rb'
 
+# The class that contains each bot and executes action on that
 class Team
   attr_reader :number, :bots, :ap, :flag, :mana
 
+  # Class initializer
+  # number = the team number
+  # bots = the bots on that team
+  # flag = the team's flag
   def initialize (number, bots, flag)
     @number = number
     @bots = bots
@@ -12,17 +17,26 @@ class Team
     @mana = $MAX_MANA
   end
 
+  # Checks if the bot's action is legal
+  # bot_number = the bot's number in the bots array
+  # command = the command that the client sent
+  # returns weither the command is legal
   def check_bot_action (bot_number, command)
     #TODO: Implement action check
     true
   end
 
+  # Resets the action points and the mana
   def reset
     @ap = $ACTION_POINTS
     @mana += $MANA_PER_TURN
   end
 
-  # Command and ap requirement is already checked
+  # Runs the command that the client sent
+  # Command and ap requirement are already checked
+  # bot_number = the number of the bot in the bots array
+  # action = the command that the client sent
+  # map = the global map object
   def execute_bot_action (bot_number, action, map)
     case action
       when /MOVE/
@@ -53,6 +67,9 @@ class Team
   end
 
   private
+
+  # Spawns a new bot
+  # map = the global map object
   def spawn_bot (map)
     yPos = 10
     if @number == 2

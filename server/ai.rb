@@ -4,21 +4,31 @@ require 'json'
 require_relative 'constants.rb'
 require_relative 'connection.rb'
 
+# This class controls each team's ai
 class AI
 
+  # Class initializer
+  # socket = the server socket
+  # team = the ai's team object
   def initialize (socket, team)
     @team = team
     @connection = Connection.new(socket)
   end
 
+  # Start the client
   def start
     @connection.start(@team.number)
   end
 
+  # Stop the client
   def stop
     @connection.close
   end
 
+  # Take a turn
+  # bot_number = the number of the bot whose turn it is
+  # map = the global map object
+  # turn_log = the global log of both maps and shots from each turn
   def take_turn (bot_number, map, turn_log)
     @connection.start_turn
     @team.reset
@@ -42,7 +52,5 @@ class AI
 
       turn_log << map.update
     end
-
-    turn_log
   end
 end

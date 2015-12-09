@@ -6,6 +6,7 @@ require_relative 'map.rb'
 class Game
   attr_reader :turn_log
 
+  # Class initializer
   def initialize
     @server_socket = TCPServer.new($SOCKET_PORT) # This is creates a socket server
 
@@ -17,11 +18,13 @@ class Game
     @turn_log = Array.new
   end
 
+  # Starts each client
   def start
     @com1.start
     @com2.start
   end
 
+  # Runs the game. Goes through each turn and then saves the turn log
   def run
     turn_number = 0
     while !@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
@@ -54,6 +57,7 @@ class Game
     game_file.puts game_data
   end
 
+  # Run a single turn
   def run_turn
     i = 0
     while i < $NUM_BOTS
@@ -64,6 +68,7 @@ class Game
     end
   end
 
+  # Turns the turn log into a savable string
   def process_turn_log
     string_turn_log = ""
 
