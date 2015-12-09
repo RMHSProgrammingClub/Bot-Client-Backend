@@ -27,4 +27,8 @@ class Entity
   def update (map)
 
   end
+
+  def to_number
+    0
+  end
 end

@@ -57,10 +57,10 @@ class Game
     i = 0
     while i < $NUM_BOTS
       @turn_log = @com1.take_turn(i, @map, @turn_log) #Turn log must be updated with any shoot commands
-      @turn_log << @map.to_string
+      #@turn_log << @map.to_string
 
       @turn_log = @com2.take_turn(i, @map, @turn_log)
-      @turn_log << @map.to_string
+      #@turn_log << @map.to_string
 
       i += 1
     end

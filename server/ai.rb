@@ -39,9 +39,10 @@ class AI
       if command == "SHOOT"
         turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
       end
-    end
 
-    map.update_map
+      map.update_map
+      turn_log << map.to_string
+    end
 
     turn_log
   end

@@ -56,6 +56,10 @@ class Map
     @map_array[x][y] = value
   end
 
+  def clear (x, y)
+    @map_array[x][y] = Air.new(x, y)
+  end
+
   def generate_map
     new_map = generate_empty_map
 
@@ -77,20 +81,12 @@ class Map
   end
 
   def to_string
-    #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall
+    #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall, 5 = flag
     new_drawable_map = ""
 
     for row in @map_array
       for cell in row
-        if cell.is_a? Bot
-          new_drawable_map << cell.team.to_s #Bot can be 1 or 2 depending on team number
-        elsif cell.is_a? Wall
-          new_drawable_map << "4" #Wall
-        elsif cell.is_a? Block and !entity.is_a? Wall
-            new_drawable_map << "3" #Block
-        else
-          new_drawable_map << "0" #Nothing
-        end
+        new_drawable_map << cell.to_number.to_s
       end
     end
 
@@ -164,7 +160,7 @@ class Map
     i = 0
     while i < $NUM_BOTS
       bots[0][i] = Bot.new(1, (i + 1) * $BOT_SPACING, $BOT_SPACING)
-      bots[1][i] = Bot.new(2, (i + 1) + 5 * $BOT_SPACING, $MAP_HEIGHT - $BOT_SPACING)
+      bots[1][i] = Bot.new(2, ((i + 1) * $BOT_SPACING) + 5, $MAP_HEIGHT - $BOT_SPACING)
 
       map[bots[0][i].x][bots[0][i].y] = bots[0][i]
       map[bots[1][i].x][bots[1][i].y] = bots[1][i]

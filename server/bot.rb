@@ -6,8 +6,8 @@ class Bot < Entity
 
   def initialize (team, x, y)
     @team = team
-    @old_x = 0
-    @old_y = 0
+    @old_x = x
+    @old_y = y
 
     angle = 360
     if @team == 1
@@ -18,8 +18,12 @@ class Bot < Entity
   end
 
   def update (map)
-    map.set(@old_x, @old_y, Air.new(@old_x, @old_y))
+    map.clear(@old_x, @old_y)
     map.set(@x, @y, self)
+  end
+
+  def to_number
+    @team
   end
 
   def calculate_vision (map)
@@ -38,12 +42,15 @@ class Bot < Entity
 
   #All actions assume that AP has already been calculated
   def move (x, y, map)
-    if map.get(@x + x, @y + y).is_ghost
-      @old_x = x
-      @old_y = y
+    new_x = @x + x
+    new_y = @y + y
 
-      @x += x
-      @y += y
+    if map.get(new_x, new_y).is_ghost
+      @old_x = @x
+      @old_y = @y
+
+      @x = new_x
+      @y = new_y
     end
   end
 

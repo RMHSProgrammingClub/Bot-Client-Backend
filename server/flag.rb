@@ -24,4 +24,8 @@ class Flag < Entity
       false
     end
   end
+
+  def to_number
+    5
+  end
 end
