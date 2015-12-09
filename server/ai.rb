@@ -67,9 +67,9 @@ class AI
       entry = Hash.new
 
       entry["type"] = ""
-      if entity.is_a? Bot and entity.is_destroyed
+      if entity.is_a? Bot and !entity.is_destroyed
         entry["type"] = "BOT"
-        entry["team"] = entity.team.number.to_s
+        entry["team"] = entity.team.to_s
       elsif entity.is_a? Wall
         entry["type"] =  "WALL"
       elsif entity.is_a? Block and !entity.is_a? Wall

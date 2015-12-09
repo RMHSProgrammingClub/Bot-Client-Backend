@@ -61,8 +61,8 @@ class Bot < Entity
   end
 
   def cast_line (angle, x, y, map)
-    nx = Math.cos(to_radians(angle))
-    ny = -Math.sin(to_radians(angle))
+    nx = Math.cos(to_radians(angle)).to_i
+    ny = -Math.sin(to_radians(angle)).to_i
     is_hit = false
 
     line_x = x
@@ -74,10 +74,10 @@ class Bot < Entity
           return map.get(line_x, line_y)
         end
 
-        line_y += 1
+        line_y += ny
       end
 
-      line_x += 1
+      line_x += nx
     end
 
     return nil
