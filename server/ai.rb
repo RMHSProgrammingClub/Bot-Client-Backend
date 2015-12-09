@@ -1,4 +1,5 @@
 require 'socket'
+require 'json'
 
 require_relative 'constants.rb'
 
@@ -23,7 +24,7 @@ class AI
     @team.reset
 
     data = populate_movement_data(bot_number, map)
-    send_data(data)
+    write(data)
 
     command = ""
     while command != "END" and @team.ap > 0
@@ -46,52 +47,42 @@ class AI
 
   private
   def populate_movement_data (bot_number, map)
-    #["START_DATA", bot_number, x, y, angle, [vision], "END_DATA"]
-
-    data = Array.new
-    data << @team.bots[bot_number].x
-    data << @team.bots[bot_number].y
-    data << @team.bots[bot_number].angle
-    data << @team.bots[bot_number].health
-    data << @team.ap
+    data = Hash.new
+    data["x"] = @team.bots[bot_number].x
+    data["y"] = @team.bots[bot_number].y
+    data["angle"] = @team.bots[bot_number].angle
+    data["health"] = @team.bots[bot_number].health
+    data["ap"] = @team.ap
     @team.bots[bot_number].calculate_vision(map)
-    data << process_vision(@team.bots[bot_number].vision)
+    data["vision"] = process_vision(@team.bots[bot_number].vision)
 
-    data
-  end
+    json = JSON.generate(data)
 
-  def send_data (data)
-    to_send = ""
-    for line in data
-      to_send << "," + line.to_s
-    end
-
-    to_send.sub!(",", "") #Remove first comma
-
-    write(to_send)
+    json
   end
 
   def process_vision (vision_array)
-    output = ""
+    output = Array.new
     for entity in vision_array
-      entry = ""
+      entry = Hash.new
 
+      entry["type"] = ""
       if entity.is_a? Bot and entity.is_destroyed
-        entry << entity.team.number.to_s + "," #1 or 2 for bot
+        entry["type"] = "BOT"
+        entry["team"] = entity.team.number.to_s
       elsif entity.is_a? Wall
-        entry << 3.to_s + "," #3 for wall
-      elsif entity.is_a? Block
-        entry << 4.to_s + "," #4 for block
+        entry["type"] =  "WALL"
+      elsif entity.is_a? Block and !entity.is_a? Wall
+        entry["type"] = "BLOCK"
       end
 
-      entry << entity.x.to_s + ","
-      entry << entity.y.to_s + ","
-      entry << entity.angle.to_s + ","
-      entry << entity.health.to_s
+      entry["x"] = entity.x.to_s
+      entry["y"] = entity.y.to_s
+      entry["angle"] = entity.angle.to_s
+      entry["health"] = entity.health.to_s
 
-      output << "," + entry
+      output << entry
     end
-    output.sub!(",", "")
 
     output
   end

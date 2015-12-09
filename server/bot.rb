@@ -69,7 +69,8 @@ class Bot < Entity
     while line_x < $MAP_WIDTH
       line_y = y
       while line_y < $MAP_HEIGHT
-        if map.get(line_x, line_y).is_a? Entity
+        entity = map.get(line_x, line_y)
+        if entity.is_a? Entity and !entity.is_ghost
           return map.get(line_x, line_y)
         end
 

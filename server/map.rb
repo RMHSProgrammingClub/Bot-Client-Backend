@@ -97,7 +97,7 @@ class Map
           new_drawable_map << cell.team.to_s #Bot can be 1 or 2 depending on team number
         elsif cell.is_a? Wall
           new_drawable_map << "4" #Wall
-        elsif cell.is_a? Block
+        elsif cell.is_a? Block and !entity.is_a? Wall
             new_drawable_map << "3" #Block
         else
           new_drawable_map << "0" #Nothing
