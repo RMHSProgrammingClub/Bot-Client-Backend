@@ -11,7 +11,7 @@ class Flag < Entity
   def initialize (x, y, team)
     @team = team
 
-    super(x, y, 0, 0, false, false)
+    super(x, y, 0, 0, false, false, 0)
   end
 
   # Checks if the flag has been captured

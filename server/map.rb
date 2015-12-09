@@ -97,8 +97,8 @@ class Map
 
     for row in @map_array
       for cell in row
-        cell.update(self)
         new_drawable_map << cell.to_number.to_s
+        cell.update(self)
       end
     end
 

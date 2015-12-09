@@ -19,7 +19,7 @@ class Bot < Entity
       angle = 180
     end
 
-    super(x, y, angle, $BOT_HEALTH, true, false)
+    super(x, y, angle, $BOT_HEALTH, true, false, $BOT_HIT_LOSS)
   end
 
   # Called when the map is updated. Removes its old object from the map and then sets a new one in its new position

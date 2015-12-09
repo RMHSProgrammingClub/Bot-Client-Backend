@@ -52,5 +52,7 @@ class AI
 
       turn_log << map.update
     end
+
+    turn_log
   end
 end

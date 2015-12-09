@@ -7,7 +7,7 @@ class Air < Entity
   # x = starting x position
   # y = starting y position
   def initialize (x, y)
-    super(x, y, 0, 0, false, true)
+    super(x, y, 0, 0, false, true, 0)
   end
 
   # Used when turning the map into a string. Each entity has their own number

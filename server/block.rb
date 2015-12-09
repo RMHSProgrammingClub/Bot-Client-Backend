@@ -9,7 +9,7 @@ class Block < Entity
   # y = starting y position
   # is_destroyable = weither a bot is able to destroy it
   def initialize (x, y, is_destroyable)
-    super(x, y, 0, $BLOCK_HEALTH, is_destroyable, false)
+    super(x, y, 0, $BLOCK_HEALTH, is_destroyable, false, $BLOCK_HIT_LOSS)
   end
 
   # Used when turning the map into a string. Each entity has their own number
