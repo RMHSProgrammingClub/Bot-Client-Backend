@@ -6,6 +6,8 @@ class Bot < Entity
 
   def initialize (team, x, y)
     @team = team
+    @old_x = 0
+    @old_y = 0
 
     angle = 360
     if @team == 1
@@ -13,6 +15,11 @@ class Bot < Entity
     end
 
     super(x, y, angle, $BOT_HEALTH, true, false)
+  end
+
+  def update (map)
+    map.set(@old_x, @old_y, Air.new(@old_x, @old_y))
+    map.set(@x, @y, self)
   end
 
   def calculate_vision (map)
@@ -32,6 +39,9 @@ class Bot < Entity
   #All actions assume that AP has already been calculated
   def move (x, y, map)
     if map.get(@x + x, @y + y).is_ghost
+      @old_x = x
+      @old_y = y
+
       @x += x
       @y += y
     end
@@ -61,9 +71,8 @@ class Bot < Entity
   end
 
   def cast_line (angle, x, y, map)
-    nx = Math.cos(to_radians(angle)).to_i
-    ny = -Math.sin(to_radians(angle)).to_i
-    is_hit = false
+    nx = Math.cos(to_radians(angle))
+    ny = -Math.sin(to_radians(angle))
 
     line_x = x
     while line_x < $MAP_WIDTH
@@ -74,10 +83,10 @@ class Bot < Entity
           return map.get(line_x, line_y)
         end
 
-        line_y += ny
+        line_y += 1
       end
 
-      line_x += nx
+      line_x += 1
     end
 
     return nil

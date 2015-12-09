@@ -23,4 +23,8 @@ class Entity
       end
     end
   end
+
+  def update (map)
+
+  end
 end

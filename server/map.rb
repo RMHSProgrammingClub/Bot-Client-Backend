@@ -69,22 +69,11 @@ class Map
   end
 
   def update_map
-    new_map = generate_empty_map
-    mew_map = generate_walls(new_map)
-
-    for flag in @flags
-      new_map[flag.x][flag.y] = flag
-    end
-
-    for bot_team in @bots
-      for bot in bot_team
-        if bot.is_destroyed
-          new_map[bot.x][bot.y] = bot
-        end
+    for row in @map_array
+      for entity in row
+        entity.update(self)
       end
     end
-
-    @map_array = new_map
   end
 
   def to_string
