@@ -49,7 +49,7 @@ class Map
     while on_x <= end_x
       on_y = y - 1
       while on_y <= end_y
-        if on_x != x and on_y != y #Ignore the middle entity
+        if on_x != x and on_y != y # Ignore the middle entity
           entities << @map_array[on_x][on_y]
         end
         on_y += 1
@@ -167,8 +167,8 @@ class Map
   def spawn_flags (map)
     flags = Array.new
 
-    flags[0] = Flag.new($MAP_WIDTH / 2, 1, 1)
-    flags[1] = Flag.new($MAP_WIDTH / 2, $MAP_HEIGHT - 2, 2) # -2 should put the flag above the wall
+    flags[0] = Flag.new(1, $MAP_HEIGHT / 2, 1)
+    flags[1] = Flag.new($MAP_WIDTH - 2, $MAP_HEIGHT / 2, 2) # -2 should put the flag above the wall
 
     map[flags[0].x][flags[0].y] = flags[0]
     map[flags[1].x][flags[1].y] = flags[1]

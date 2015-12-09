@@ -18,11 +18,36 @@ class Team
   end
 
   # Checks if the bot's action is legal
-  # bot_number = the bot's number in the bots array
+  # bot = the bot
   # command = the command that the client sent
   # returns weither the command is legal
-  def check_bot_action (bot_number, command)
-    #TODO: Implement action check
+  def check_bot_action (bot, command, map)
+    case command
+      when /MOVE/
+        if !check_ap($MOVEMENT_COST) then return false end
+        x = command.split(" ")[1].to_i
+        y = command.split(" ")[2].to_i
+        if !bot.check_move(x, y, map) then return false end
+      when "SHOOT"
+        if !check_ap($SHOOT_COST) then return false end
+      when /TURN/
+        degrees = command.split(" ").to_i
+        if !check_ap($degrees / $TURN_COST) then return false end
+        if !bot.check_turn(degrees) then return false end
+      when /PLACE/
+        if !check_ap($PLACE_COST) then return false end
+        if !check_mana($PLACE_MANA_COST) then return false end
+        x = command.split(" ")[1].to_i
+        y = command.split(" ")[2].to_i
+        if !bot.check_place(map, x, y) then return false end
+      when "SPAWN"
+        if !check_ap($SPAWN_COST) then return false end
+        if !check_mana($SPAWN_MANA_COST) then return false end
+        if !check_spawn_bot(map) then return false end
+      else
+        return false
+    end
+
     true
   end
 
@@ -49,7 +74,7 @@ class Team
         @bots[bot_number].shoot
       when /TURN/
         degrees = action.split(" ").to_i
-        @ap -= degrees - $TURN_COST
+        @ap -= degrees / $TURN_COST
         @bots[bot_number].turn(degrees)
       when /PLACE/
         @ap -= $PLACE_COST
@@ -61,8 +86,6 @@ class Team
         @ap -= $SPAWN_COST
         @mana -= $SPAWN_MANA_COST
         spawn_bot(@map)
-      else
-        #My god...
     end
   end
 
@@ -78,7 +101,36 @@ class Team
 
     bot = Bot.new(@number, $MAP_WIDTH / 2, yPos)
     @bots << bot
-    @map.set($MAP_WIDTH / 2, yPos, bot)
-    @map.bot << bot
+    map.set($MAP_WIDTH / 2, yPos, bot)
+    map.bot << bot
+  end
+
+  def check_spawn_bot (map)
+    yPos = 10
+    if @number == 2
+      yPos = $MAP_HEIGHT - 10
+    end
+
+    if map.get($MAP_WIDTH / 2, yPos).is_a? Air
+      true
+    else
+      false
+    end
+  end
+
+  def check_ap (cost)
+    if @ap - cost > 0
+      true
+    else
+      false
+    end
+  end
+
+  def check_mana (cost)
+    if @mana - cost > 0
+      true
+    else
+      false
+    end
   end
 end

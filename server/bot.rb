@@ -70,10 +70,27 @@ class Bot < Entity
     end
   end
 
+  def check_move (x, y, map)
+    if x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_a? Air
+      true
+    else
+      false
+    end
+  end
+
   # Called when the client sends "TURN". Turns the bot
   # degrees = the degrees that the current angle should be updated by
   def turn (degrees)
-    @angle += degrees % 360
+    @angle += degrees
+    @angle %= 360
+  end
+
+  def check_turn (degrees)
+    if degrees != 0
+      true
+    else
+      false
+    end
   end
 
   # Called when the client sends "SHOOTs". Shoots in the direction that the bot is facing
@@ -93,6 +110,14 @@ class Bot < Entity
   def place_block (map, x, y)
     if map.get(@x + x, @y + y).is_ghost
       map.set(@x + x, @y + y, Block.new(@x + x, @y + y, true))
+    end
+  end
+
+  def check_place (map, x, y)
+    if map.get(x, y).is_a? Air
+      true
+    else
+      false
     end
   end
 

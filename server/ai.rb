@@ -37,11 +37,9 @@ class AI
     bot.calculate_vision(map)
     @connection.send_data(bot, @team.ap)
 
-    command = ""
+    command = @connection.read_line
     while command != "END" and @team.ap > 0
-      command = @connection.read_line
-
-      if !@team.check_bot_action(bot_number, command)
+      if !@team.check_bot_action(bot, command, map)
         abort("Command: #{command} is not valid!")
       end
 
@@ -51,6 +49,7 @@ class AI
       end
 
       turn_log << map.update
+      command = @connection.read_line
     end
 
     turn_log
