@@ -76,6 +76,8 @@ class Connection
           entry["type"] =  "WALL"
         elsif entity.is_a? Block and !entity.is_a? Wall # Wall is an subclass of block
           entry["type"] = "BLOCK"
+        elsif entity.is_a? Flag
+          entry["type"] = "FLAG"
         end
       end
 
