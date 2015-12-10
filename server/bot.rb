@@ -80,6 +80,7 @@ class Bot < Entity
   # x = x position modifier
   # y = y position modifier
   # map = global map object
+  # returns weither the action is valid
   def check_move (x, y, map)
     if x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_a? Air
       true
@@ -97,6 +98,7 @@ class Bot < Entity
 
   # Check to see if bot is able to turn
   # degrees = degrees to turn by
+  # returns weither the action is valid
   def check_turn (degrees)
     if degrees != 0
       true
@@ -115,6 +117,17 @@ class Bot < Entity
     end
   end
 
+  # Check to see if bot is able to shoot
+  # turn_number = the turn number of the game
+  # returns weither the action is valid
+  def check_shoot (turn_number)
+    if !turn_number.between?(0, $TURNS_INVULN)
+      true
+    else
+      false
+    end
+  end
+
   # Places a block
   # map = the global map object
   # x = -1..1. Integer. The amount that the current x should be changed by to place the block
@@ -129,6 +142,7 @@ class Bot < Entity
   # map = the global map object
   # x = the x position modifier
   # y = the y position modifier
+  # returns weither the action is valid
   def check_place (map, x, y)
     if map.get(@x + x, @y + y).is_a? Air
       true

@@ -4,7 +4,7 @@ require_relative 'team.rb'
 require_relative 'map.rb'
 
 class Game
-  attr_reader :turn_log
+  attr_reader :turn_log, :turn_number
 
   # Class initializer
   def initialize
@@ -26,16 +26,16 @@ class Game
 
   # Runs the game. Goes through each turn and then saves the turn log
   def run
-    turn_number = 0
+    @turn_number = 0
     while !@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
-      if turn_number >= $MAX_TURNS
+      if @turn_number >= $MAX_TURNS
         break
       else
         puts "Running turn " + turn_number.to_s
         run_turn
       end
 
-      turn_number += 1
+      @turn_number += 1
     end
 
     @turn_log << @map.update # Update map once more because changes to be map are not reflected until the second update
@@ -63,8 +63,8 @@ class Game
   def run_turn
     i = 0
     while i < $NUM_BOTS
-      @turn_log = @ai1.take_turn(i, @map, @turn_log)
-      @turn_log = @ai2.take_turn(i, @map, @turn_log)
+      @turn_log = @ai1.take_turn(i, @map, @turn_log, @turn_number)
+      @turn_log = @ai2.take_turn(i, @map, @turn_log, @turn_number)
 
       i += 1
     end

@@ -20,8 +20,9 @@ class Team
   # Checks if the bot's action is legal
   # bot = the bot
   # command = the command that the client sent
+  # turn_number = the turn number of the game
   # returns weither the command is legal
-  def check_bot_action (bot, command, map)
+  def check_bot_action (bot, command, map, turn_number)
     case command
       when /MOVE/
         if !check_ap($MOVEMENT_COST) then return false end
@@ -30,6 +31,7 @@ class Team
         if !bot.check_move(x, y, map) then return false end
       when "SHOOT"
         if !check_ap($SHOOT_COST) then return false end
+        if !bot.check_shoot(turn_number) then return false end
       when /TURN/
         degrees = command.split(" ").to_i
         if !check_ap($degrees / $TURN_COST) then return false end
