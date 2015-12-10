@@ -78,6 +78,7 @@ class Connection
           entry["type"] = "BLOCK"
         elsif entity.is_a? Flag
           entry["type"] = "FLAG"
+          entry["team"] = entity.team
         end
       end
 
