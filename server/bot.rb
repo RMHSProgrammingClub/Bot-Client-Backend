@@ -40,14 +40,24 @@ class Bot < Entity
   def calculate_vision (map)
     @vision = Array.new
 
-    current_angle = @angle - ($FOV / 2) # Leftmost angle that the bot can see
-    while current_angle < @angle + ($FOV / 2)
-      entity = cast_line(current_angle, @x, @y, map)
-      if !@vision.include?(entity)
-        @vision << entity
-      end
+    leftmost_angle = normilize_angle(@angle - ($FOV / 2))
+    rightmost_angle = normilize_angle(@angle + ($FOV / 2))
 
-      current_angle += 1
+    for row in map.map_array
+      for cell in row
+        if !cell.is_ghost # If it is possible to walk through it then you cannot see it
+          angle_between = normilize_angle(calculate_angle(@x, @y, cell.x, cell.y))
+
+          if angle_between.between?(-$FOV / 2, $FOV / 2)
+            #entity_between = cast_line(angle_between, @x, @y, map)
+
+            #if cell == entity_between
+              @vision << cell
+            #end
+          end
+
+        end
+      end
     end
   end
 
@@ -133,6 +143,17 @@ class Bot < Entity
 
   private
 
+  def normilize_angle (angle)
+    (360 + angle % 360) % 360
+  end
+
+  def calculate_angle (x1, y1, x2, y2)
+    delta_x = x2 - x1
+    delta_y = y2 - y1
+
+    Math.atan2(delta_y, delta_x) * 180 / Math::PI
+  end
+
   # Converts degrees to radians
   # degrees = degrees to be converted to radians
   # returns radians
@@ -154,11 +175,11 @@ class Bot < Entity
 
     line_x = x
     while line_x < $MAP_WIDTH
-      line_y = y
+      line_y = y 
       while line_y < $MAP_HEIGHT
-        entity = map.get(line_x, line_y)
-        if entity.is_a? Entity and !entity.is_ghost
-          return map.get(line_x, line_y)
+        entity = map.get(line_x.to_i, line_y.to_i)
+        if entity != self and !entity.is_ghost
+          return entity
         end
 
         line_y += 1 * ny

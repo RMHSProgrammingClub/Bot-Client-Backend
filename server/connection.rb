@@ -71,7 +71,7 @@ class Connection
       if !entity.is_destroyed
         if entity.is_a? Bot
           entry["type"] = "BOT"
-          entry["team"] = entity.team.to_s
+          entry["team"] = entity.team
         elsif entity.is_a? Wall
           entry["type"] =  "WALL"
         elsif entity.is_a? Block and !entity.is_a? Wall # Wall is an subclass of block
@@ -81,10 +81,10 @@ class Connection
         end
       end
 
-      entry["x"] = entity.x.to_s
-      entry["y"] = entity.y.to_s
-      entry["angle"] = entity.angle.to_s
-      entry["health"] = entity.health.to_s
+      entry["x"] = entity.x
+      entry["y"] = entity.y
+      entry["angle"] = entity.angle
+      entry["health"] = entity.health
 
       output << entry
     end
