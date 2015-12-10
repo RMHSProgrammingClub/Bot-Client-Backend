@@ -13,15 +13,15 @@ class Game
     @map = Map.new
     @team1 = Team.new(1, @map.get_bots(1), @map.get_flag(1))
     @team2 = Team.new(2, @map.get_bots(2), @map.get_flag(2))
-    @com1 = AI.new(@server_socket, @team1)
-    @com2 = AI.new(@server_socket, @team2)
+    @ai1 = AI.new(@server_socket, @team1)
+    @ai2 = AI.new(@server_socket, @team2)
     @turn_log = Array.new
   end
 
   # Starts each client
   def start
-    @com1.start
-    @com2.start
+    @ai1.start
+    @ai2.start
   end
 
   # Runs the game. Goes through each turn and then saves the turn log
@@ -63,8 +63,8 @@ class Game
   def run_turn
     i = 0
     while i < $NUM_BOTS
-      @turn_log = @com1.take_turn(i, @map, @turn_log)
-      @turn_log = @com2.take_turn(i, @map, @turn_log)
+      @turn_log = @ai1.take_turn(i, @map, @turn_log)
+      @turn_log = @ai2.take_turn(i, @map, @turn_log)
 
       i += 1
     end
