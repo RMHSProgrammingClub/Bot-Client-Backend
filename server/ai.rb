@@ -35,7 +35,7 @@ class AI
 
     bot = @team.bots[bot_number]
     bot.calculate_vision(map)
-    @connection.send_data(bot, @team.ap)
+    @connection.send_data(bot, @team.ap, @team.mana)
 
     command = @connection.read_line
     while command != "END" and @team.ap > 0

@@ -41,17 +41,17 @@ class Connection
   # Sends turn data to the client
   # bot = the bot object who's turn it is
   # ap = the number of action points left
-  def send_data (bot, ap)
+  def send_data (bot, ap, mana)
     data = Hash.new
     data["x"] = bot.x
     data["y"] = bot.y
     data["angle"] = bot.angle
     data["health"] = bot.health
     data["ap"] = ap
+    data["mana"] = mana
     data["vision"] = process_vision(bot.vision)
 
-    json = JSON.pretty_generate(data)
-    abort(json.to_s)
+    json = JSON.generate(data)
 
     write(json)
   end
