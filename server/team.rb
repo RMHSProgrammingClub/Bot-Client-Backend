@@ -105,6 +105,8 @@ class Team
     map.bot << bot
   end
 
+  # Check to see if bot is able spawn a new bot
+  # map = the global map object
   def check_spawn_bot (map)
     yPos = 10
     if @number == 2
@@ -118,6 +120,8 @@ class Team
     end
   end
 
+  # Check to see if bot has enough AP to carry out an action
+  # cost = the cost of the specfic action
   def check_ap (cost)
     if @ap - cost > 0
       true
@@ -126,6 +130,8 @@ class Team
     end
   end
 
+  # Check to see if bot has enough mana to carry out an action
+  # cost = the mana the action costs
   def check_mana (cost)
     if @mana - cost > 0
       true

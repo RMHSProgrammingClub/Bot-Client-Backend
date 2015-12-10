@@ -70,6 +70,10 @@ class Bot < Entity
     end
   end
 
+  # Check to see if bot is able to move
+  # x = x position modifier
+  # y = y position modifier
+  # map = global map object
   def check_move (x, y, map)
     if x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_a? Air
       true
@@ -85,6 +89,8 @@ class Bot < Entity
     @angle %= 360
   end
 
+  # Check to see if bot is able to turn
+  # degrees = degrees to turn by
   def check_turn (degrees)
     if degrees != 0
       true
@@ -93,7 +99,7 @@ class Bot < Entity
     end
   end
 
-  # Called when the client sends "SHOOTs". Shoots in the direction that the bot is facing
+  # Called when the client sends "SHOOT". Shoots in the direction that the bot is facing
   # map = the global map object
   def shoot (map)
     entity = cast_line(@angle, @x, @y, map)
@@ -113,8 +119,12 @@ class Bot < Entity
     end
   end
 
+  # Check to see if bot is able to place block
+  # map = the global map object
+  # x = the x position modifier
+  # y = the y position modifier
   def check_place (map, x, y)
-    if map.get(x, y).is_a? Air
+    if map.get(@x + x, @y + y).is_a? Air
       true
     else
       false

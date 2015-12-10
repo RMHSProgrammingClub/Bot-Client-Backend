@@ -50,7 +50,8 @@ class Connection
     data["ap"] = ap
     data["vision"] = process_vision(bot.vision)
 
-    json = JSON.generate(data)
+    json = JSON.pretty_generate(data)
+    abort(json.to_s)
 
     write(json)
   end
