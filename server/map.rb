@@ -156,7 +156,16 @@ class Map
   # map = the map to add blocks to
   # returns the map with blocks
   def generate_blocks (map)
-    #TODO: Build stars
+    blocks = 0
+    while blocks < $NUM_BLOCKS
+      rand_x = Random.rand($MAP_WIDTH / 3..$MAP_WIDTH - ($MAP_WIDTH / 3)) # Only spawn block in the middlish
+      rand_y = Random.rand($MAP_HEIGHT)
+
+      if map[rand_x][rand_y].is_a? Air
+        map[rand_x][rand_y] = Block.new(rand_x, rand_y, true)
+        blocks += 1
+      end
+    end
 
     map
   end
