@@ -4,16 +4,17 @@ class Connection
 
   # The class initializer
   # socket = the server socket
-  def initialize (socket)
+  # team = the team object
+  def initialize (socket, team)
     @socket = socket
+    @team = team
   end
 
   # Sends "START" and the team number to the client. This alerts the client so that it waits for its turn
-  # team_number = the team number that the client is
-  def start (team_number)
+  def start
     @client = @socket.accept
     write("START")
-    write(team_number.to_s)
+    write(@team.number.to_s)
   end
 
   # Closes the socket connection
@@ -40,15 +41,14 @@ class Connection
 
   # Sends turn data to the client
   # bot = the bot object who's turn it is
-  # ap = the number of action points left
-  def send_data (bot, ap, mana)
+  def send_data (bot)
     data = Hash.new
     data["x"] = bot.x
     data["y"] = bot.y
     data["angle"] = bot.angle
     data["health"] = bot.health
-    data["ap"] = ap
-    data["mana"] = mana
+    data["ap"] = @team.ap
+    data["mana"] = @team.mana
     data["vision"] = process_vision(bot.vision)
 
     json = JSON.generate(data)

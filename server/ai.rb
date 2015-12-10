@@ -12,12 +12,12 @@ class AI
   # team = the ai's team object
   def initialize (socket, team)
     @team = team
-    @connection = Connection.new(socket)
+    @connection = Connection.new(socket, team)
   end
 
   # Start the client
   def start
-    @connection.start(@team.number)
+    @connection.start
   end
 
   # Stop the client
@@ -35,7 +35,7 @@ class AI
 
     bot = @team.bots[bot_number]
     bot.calculate_vision(map)
-    @connection.send_data(bot, @team.ap, @team.mana)
+    @connection.send_data(bot)
 
     command = @connection.read_line
     while command != "END" and @team.ap > 0
