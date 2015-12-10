@@ -40,22 +40,18 @@ class Bot < Entity
   def calculate_vision (map)
     @vision = Array.new
 
-    leftmost_angle = normilize_angle(@angle - ($FOV / 2))
-    rightmost_angle = normilize_angle(@angle + ($FOV / 2))
-
     for row in map.map_array
       for cell in row
         if !cell.is_ghost # If it is possible to walk through it then you cannot see it
           angle_between = normilize_angle(calculate_angle(@x, @y, cell.x, cell.y))
 
           if angle_between.between?(-$FOV / 2, $FOV / 2)
-            #entity_between = cast_line(angle_between, @x, @y, map)
+            #entity_between = cast_line(leftmost_angle + angle_between, @x, @y, map)
 
             #if cell == entity_between
               @vision << cell
             #end
           end
-
         end
       end
     end
@@ -143,10 +139,19 @@ class Bot < Entity
 
   private
 
+  # Normilizes an angle to make it in between 0 and 360
+  # angle = an angle that is -Infinity - Infinity
+  # returns an angle 0 - 360
   def normilize_angle (angle)
     (360 + angle % 360) % 360
   end
 
+  # Calculates angle between two points
+  # x1 = first x position
+  # y1 = first y position
+  # x2 = second x position
+  # y2 = second y position
+  # returns the angle inbetween the two points
   def calculate_angle (x1, y1, x2, y2)
     delta_x = x2 - x1
     delta_y = y2 - y1
