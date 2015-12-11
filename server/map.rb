@@ -19,7 +19,7 @@ class Map
   # y = the y position
   # returns an entity
   def get (x, y)
-    @map_array[x][y]
+    @map_array[y][x]
   end
 
   # Get all bots in a specific team
@@ -50,7 +50,7 @@ class Map
       on_y = y - 1
       while on_y <= end_y
         if on_x != x and on_y != y # Ignore the middle entity
-          entities << @map_array[on_x][on_y]
+          entities << get(on_x, on_y)
         end
         on_y += 1
       end
@@ -65,14 +65,14 @@ class Map
   # y = the y position
   # value = the object that the point is set to
   def set (x, y, value)
-    @map_array[x][y] = value
+    @map_array[y][x] = value # y then x because the array is formatted row (y) and then column (x)
   end
 
   # Makes a point air
   # x = the x position
   # y = the y position
   def clear (x, y)
-    @map_array[x][y] = Air.new(x, y)
+    set(x, y, Air.new(x, y))
   end
 
   # Generates the starting map with walls, bots, and flags
@@ -87,6 +87,17 @@ class Map
     @bots, new_map = spawn_bots(new_map)
 
     new_map
+  end
+
+  # Checks to see if inputed x and y values are inside the map
+  # x = the x position (or the column)
+  # y = the y position (or the row)
+  def in_bounds (x, y)
+    if x.between?(0, $MAP_WIDTH - 1) and y.between?(0, $MAP_HEIGHT - 1)
+      true
+    else
+      false
+    end
   end
 
   # Updates every entities position and turns the map into a drawable string
@@ -113,17 +124,18 @@ class Map
     new_map = Array.new
 
     #Build empty space
-    x = 0
-    while x < $MAP_WIDTH
-      new_map[x] = Array.new
+    col = 0
+    row = 0
+    while in_bounds(col, row)
+      new_map[row] = Array.new
 
-      y = 0
-      while y < $MAP_HEIGHT
-        new_map[x][y] = Air.new(x, y)
-        y += 1
+      while in_bounds(col, row)
+        new_map[row][col] = Air.new(row, col)
+        col += 1
       end
 
-      x += 1
+      col = 0
+      row += 1
     end
 
     new_map
@@ -134,19 +146,19 @@ class Map
   # returns the map with walls
   def generate_walls (map)
     #Build top and bottom walls
-    x = 0
-    while x < $MAP_WIDTH
-      map[x][0] = Wall.new(x, 0)
-      map[x][$MAP_HEIGHT - 1] = Wall.new(x, $MAP_HEIGHT - 1)
-      x += 1
+    col = 0
+    while in_bounds(col, 0)
+      map[0][col] = Wall.new(col, 0)
+      map[$MAP_HEIGHT - 1][col] = Wall.new(col, $MAP_HEIGHT - 1)
+      col += 1
     end
 
     #Build side walls
-    y = 0
-    while y < $MAP_HEIGHT
-      map[0][y] = Wall.new(0, y)
-      map[$MAP_WIDTH - 1][y] = Wall.new($MAP_WIDTH - 1, y)
-      y += 1
+    row = 0
+    while in_bounds(0, row)
+      map[row][0] = Wall.new(0, row)
+      map[row][$MAP_WIDTH - 1] = Wall.new($MAP_WIDTH - 1, row)
+      row += 1
     end
 
     map
@@ -158,11 +170,11 @@ class Map
   def generate_blocks (map)
     blocks = 0
     while blocks < $NUM_BLOCKS
-      rand_x = Random.rand($MAP_WIDTH / 3..$MAP_WIDTH - ($MAP_WIDTH / 3)) # Only spawn block in the middlish
-      rand_y = Random.rand($MAP_HEIGHT)
+      rand_row = Random.rand($MAP_HEIGHT / 3..$MAP_HEIGHT - ($MAP_HEIGHT / 3)) # Only spawn block in the middlish
+      rand_col = Random.rand($MAP_WIDTH)
 
-      if map[rand_x][rand_y].is_a? Air
-        map[rand_x][rand_y] = Block.new(rand_x, rand_y, true)
+      if map[rand_row][rand_col].is_a? Air
+        map[rand_row][rand_col] = Block.new(rand_row, rand_col, true)
         blocks += 1
       end
     end
@@ -176,11 +188,11 @@ class Map
   def spawn_flags (map)
     flags = Array.new
 
-    flags[0] = Flag.new(1, $MAP_HEIGHT / 2, 1)
-    flags[1] = Flag.new($MAP_WIDTH - 2, $MAP_HEIGHT / 2, 2) # -2 should put the flag above the wall
+    flags[0] = Flag.new($MAP_WIDTH / 2, 1, 1)
+    flags[1] = Flag.new($MAP_WIDTH / 2, $MAP_HEIGHT - 2, 2) # -2 should put the flag above the wall
 
-    map[flags[0].x][flags[0].y] = flags[0]
-    map[flags[1].x][flags[1].y] = flags[1]
+    map[flags[0].y][flags[0].x] = flags[0]
+    map[flags[1].y][flags[1].x] = flags[1]
 
     return flags, map
   end
@@ -195,11 +207,11 @@ class Map
 
     i = 0
     while i < $NUM_BOTS
-      bots[0][i] = Bot.new(1, $BOT_SPACING, (i + 1) * $BOT_SPACING - 2)
-      bots[1][i] = Bot.new(2, $MAP_WIDTH - $BOT_SPACING, ((i + 1) * $BOT_SPACING) + 2)
+      bots[0][i] = Bot.new(1, (i + 1) * $BOT_SPACING, $BOT_SPACING - 2)
+      bots[1][i] = Bot.new(2, ((i + 1) * $BOT_SPACING) + 2, $MAP_HEIGHT - $BOT_SPACING)
 
-      map[bots[0][i].x][bots[0][i].y] = bots[0][i]
-      map[bots[1][i].x][bots[1][i].y] = bots[1][i]
+      map[bots[0][i].y][bots[0][i].x] = bots[0][i]
+      map[bots[1][i].y][bots[1][i].x] = bots[1][i]
       i += 1
     end
 

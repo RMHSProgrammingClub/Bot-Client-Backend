@@ -1,3 +1,5 @@
+require 'pry'
+
 require_relative 'entity.rb'
 require_relative 'constants.rb'
 
@@ -14,9 +16,9 @@ class Bot < Entity
     @old_x = x
     @old_y = y
 
-    angle = 360
-    if @team == 1
-      angle = 180
+    angle = 0
+    if @team == 2
+      angle = 360
     end
 
     super(x, y, angle, $BOT_HEALTH, true, false, $BOT_HIT_LOSS)
@@ -45,8 +47,8 @@ class Bot < Entity
         if !cell.is_ghost # If it is possible to walk through it then you cannot see it
           angle_between = normilize_angle(calculate_angle(@x, @y, cell.x, cell.y))
 
-          if angle_between.between?(-$FOV / 2, $FOV / 2)
-            #entity_between = cast_line(leftmost_angle + angle_between, @x, @y, map)
+          if angle_between.between?($FOV / 2, $FOV + ($FOV / 2))
+            #entity_between = cast_line(@angle + angle_between, @x, @y, map)
 
             #if cell == entity_between
               @vision << cell
@@ -187,10 +189,10 @@ class Bot < Entity
   # map = the global map object
   # returns the first solid entity to be hit
   def cast_line (angle, x, y, map)
-    #nx = Math.cos(to_radians(angle))
-    #ny = -Math.sin(to_radians(angle))
-    nx = Math.sin(to_radians(angle))
-    ny = Math.cos(to_radians(angle))
+    nx = Math.cos(to_radians(angle))
+    ny = -Math.sin(to_radians(angle))
+    #nx = Math.sin(to_radians(angle))
+    #ny = Math.cos(to_radians(angle))
 
     line_x = x
     while line_x < $MAP_WIDTH
@@ -201,12 +203,12 @@ class Bot < Entity
           return entity
         end
 
-        line_y += 1 * ny
+        line_y += ny
       end
 
-      line_x += 1 * nx
+      line_x += nx
     end
 
-    return nil
+    abort("Bot cannot see anything?")
   end
 end
