@@ -18,7 +18,7 @@ class Bot < Entity
 
     angle = 0
     if @team == 2
-      angle = 360
+      angle = 180
     end
 
     super(x, y, angle, $BOT_HEALTH, true, false, $BOT_HIT_LOSS)
@@ -48,11 +48,11 @@ class Bot < Entity
           angle_between = normilize_angle(calculate_angle(@x, @y, cell.x, cell.y))
 
           if angle_between.between?($FOV / 2, $FOV + ($FOV / 2))
-            #entity_between = cast_line(@angle + angle_between, @x, @y, map)
+            entity_between = cast_line(@x.to_f, @y.to_f, cell.x.to_f, cell.y.to_f, map)
 
-            #if cell == entity_between
+            if cell == entity_between
               @vision << cell
-            #end
+            end
           end
         end
       end
@@ -188,25 +188,19 @@ class Bot < Entity
   # y = the start y
   # map = the global map object
   # returns the first solid entity to be hit
-  def cast_line (angle, x, y, map)
-    nx = Math.cos(to_radians(angle))
-    ny = -Math.sin(to_radians(angle))
-    #nx = Math.sin(to_radians(angle))
-    #ny = Math.cos(to_radians(angle))
+  def cast_line (x1, y1, x2, y2, map)
+    slope = (x2 - x1) / (y2 - y1)
 
-    line_x = x
-    while line_x < $MAP_WIDTH
-      line_y = y 
-      while line_y < $MAP_HEIGHT
-        entity = map.get(line_x.to_i, line_y.to_i)
-        if entity != self and !entity.is_ghost
-          return entity
-        end
+    line_y = y1
+    while map.in_y_bounds(line_y)
+      line_x = x1 + (slope * (line_y - y1))
 
-        line_y += ny
+      entity = map.get(line_x.to_i, line_y.to_i)
+      if entity != self and !entity.is_ghost
+        return entity
       end
 
-      line_x += nx
+      line_y += 1
     end
 
     abort("Bot cannot see anything?")

@@ -93,7 +93,23 @@ class Map
   # x = the x position (or the column)
   # y = the y position (or the row)
   def in_bounds (x, y)
-    if x.between?(0, $MAP_WIDTH - 1) and y.between?(0, $MAP_HEIGHT - 1)
+    if in_x_bounds(x) and in_y_bounds(y)
+      true
+    else
+      false
+    end
+  end
+
+  def in_x_bounds (x)
+    if x.between?(0, $MAP_WIDTH - 1)
+      true
+    else
+      false
+    end
+  end
+
+  def in_y_bounds (y)
+    if y.between?(0, $MAP_HEIGHT - 1)
       true
     else
       false
