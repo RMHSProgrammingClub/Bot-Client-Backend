@@ -35,7 +35,11 @@ class Bot < Entity
   # Used when turning the map into a string. Each entity has their own number
   # returns the team number
   def to_number
-    @team
+    if @team == 1
+      "1"
+    else
+      "2"
+    end
   end
 
   # Calculates and stores what the bot can see
@@ -180,14 +184,14 @@ class Bot < Entity
   # degrees = degrees to be converted to radians
   # returns radians
   def to_radians (degrees)
-    degrees * (3.14 / 180)
+    degrees * $TO_RADIANS
   end
 
   # Converts radians to degrees
   # radians = radians to be converted to degrees
   # returns degrees
   def to_degrees (radians)
-    radians * (180 / 3.14)
+    radians * $TO_DEGREES
   end
 
   # Creates a line from two points and returns the first solid entity that it hits

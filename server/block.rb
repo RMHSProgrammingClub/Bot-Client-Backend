@@ -15,6 +15,6 @@ class Block < Entity
   # Used when turning the map into a string. Each entity has their own number
   # returns 3
   def to_number
-    3
+    "3"
   end
 end

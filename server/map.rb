@@ -124,7 +124,7 @@ class Map
 
     for row in @map_array
       for cell in row
-        new_drawable_map << cell.to_number.to_s
+        new_drawable_map << cell.to_number
       end
     end
 

@@ -22,3 +22,5 @@ $SHOOT_COST = 6 # The action point cost of shooting
 $BOT_HIT_LOSS = 34 # The health that is lost when a bot gets shot
 $BLOCK_HIT_LOSS = 10 # The health that is lost when a block gets shot
 $BOTS_TO_WIN = 3 # The bots needed to surrond the flag to win
+$TO_DEGREES = 180 / Math::PI # Multiplied by radians to get degrees
+$TO_RADIANS = Math::PI / 180 # Multiplied by degrees to get radians

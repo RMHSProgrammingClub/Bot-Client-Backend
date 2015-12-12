@@ -37,6 +37,6 @@ class Flag < Entity
   # Used when turning the map into a string. Each entity has their own number
   # returns 5
   def to_number
-    5
+    "5"
   end
 end

@@ -42,11 +42,11 @@ class AI
     while command != "END" and @team.ap > 0
       if @team.check_bot_action(bot, command, map, turn_number) # Only execute actions if the move is valid
         @team.execute_bot_action(bot_number, command, map)
+
+        turn_log << map.to_string
         if command == "SHOOT"
           turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
         end
-
-        turn_log << map.to_string
       else
         puts "Command: #{command} is not valid!"
       end

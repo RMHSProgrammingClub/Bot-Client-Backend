@@ -57,6 +57,7 @@ class Game
     puts "Saving turn log"
     game_file = File.new("game.txt", "w")
     game_file.puts game_data
+    game_file.close
   end
 
   # Run a single turn
