@@ -16,9 +16,9 @@ class Bot < Entity
     @old_x = x
     @old_y = y
 
-    angle = 0
+    angle = 90
     if @team == 2
-      angle = 180
+      angle = 270
     end
 
     super(x, y, angle, $BOT_HEALTH, true, false, $BOT_HIT_LOSS)
@@ -42,13 +42,16 @@ class Bot < Entity
   def calculate_vision (map)
     @vision = Array.new
 
+    leftmost_angle = @angle - ($FOV / 2)
+    rightmost_angle = @angle + ($FOV / 2)
+
     for row in map.map_array
       for cell in row
         if !cell.is_ghost # If it is possible to walk through it then you cannot see it
-          angle_between = normilize_angle(calculate_angle(@x, @y, cell.x, cell.y))
+          angle_between = calculate_angle(@x, @y, cell.x, cell.y)
 
-          if angle_between.between?($FOV / 2, $FOV + ($FOV / 2))
-            entity_between = cast_line(@x.to_f, @y.to_f, cell.x.to_f, cell.y.to_f, map)
+          if angle_between.between?(leftmost_angle, rightmost_angle)
+            entity_between = draw_line(@x.to_f, @y.to_f, cell.x.to_f, cell.y.to_f, map)
 
             if cell == entity_between
               @vision << cell
@@ -112,7 +115,7 @@ class Bot < Entity
   # Called when the client sends "SHOOT". Shoots in the direction that the bot is facing
   # map = the global map object
   def shoot (map)
-    entity = cast_line(@angle, @x, @y, map)
+    entity = draw_line_from_angle(@x, @y, @angle, map)
 
     if !entity.nil? and entity.team != @team
       entity.hit
@@ -155,13 +158,6 @@ class Bot < Entity
 
   private
 
-  # Normilizes an angle to make it in between 0 and 360
-  # angle = an angle that is -Infinity - Infinity
-  # returns an angle 0 - 360
-  def normilize_angle (angle)
-    (360 + angle % 360) % 360
-  end
-
   # Calculates angle between two points
   # x1 = first x position
   # y1 = first y position
@@ -172,7 +168,7 @@ class Bot < Entity
     delta_x = x2 - x1
     delta_y = y2 - y1
 
-    Math.atan2(delta_y, delta_x) * 180 / Math::PI
+    to_degrees(Math.atan2(delta_y, delta_x))
   end
 
   # Converts degrees to radians
@@ -182,17 +178,26 @@ class Bot < Entity
     degrees * Math::PI / 180 
   end
 
-  # Creates a line and returns the first solid entity that it hits
-  # angle = the angle the line should be cast
-  # x = the start x
-  # y = the start y
+  # Converts radians to degrees
+  # radians = radians to be converted to degrees
+  # returns degrees
+  def to_degrees (radians)
+    radians * (180 / Math::PI)
+  end
+
+  # Creates a line from two points and returns the first solid entity that it hits
+  # x1 = the start x
+  # y1 = the start y
+  # x2 = the end x
+  # y2 = the end y
   # map = the global map object
   # returns the first solid entity to be hit
-  def cast_line (x1, y1, x2, y2, map)
+  def draw_line (x1, y1, x2, y2, map)
     slope = (x2 - x1) / (y2 - y1)
 
+    line_x = 0
     line_y = y1
-    while map.in_y_bounds(line_y)
+    while map.in_bounds(line_x, line_y)
       line_x = x1 + (slope * (line_y - y1))
 
       entity = map.get(line_x.to_i, line_y.to_i)
@@ -204,5 +209,29 @@ class Bot < Entity
     end
 
     abort("Bot cannot see anything?")
+  end
+
+
+  # Creates a line from an angle and returns the first solid entity that it hits
+  # x = the start x
+  # y = the start y
+  # angle = the angle to draw the line at
+  # map = the global map object
+  # returns the first solid entity to be hit
+  def draw_line_from_angle (x, y, angle, map)
+    dx = Math.cos(to_radians(angle))
+    dy = -Math.sin(to_radians(angle))
+    line_x = x
+    line_y = y
+
+    while map.in_bounds(line_x, line_y)
+      entity = map.get(line_x.to_i, line_y.to_i)
+      if entity != self and !entity.is_ghost
+        return entity
+      end
+
+      line_x += dx
+      line_y += dy
+    end
   end
 end
