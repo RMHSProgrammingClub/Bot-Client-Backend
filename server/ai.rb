@@ -46,7 +46,7 @@ class AI
           turn_log << ["SHOOT", x, y, @team.bots[bot_number].angle] #Only sending start position and angle back
         end
 
-        turn_log << map.update
+        turn_log << map.to_string
       else
         puts "Command: #{command} is not valid!"
       end

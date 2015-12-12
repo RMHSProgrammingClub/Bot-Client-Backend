@@ -24,13 +24,15 @@ class Entity
   end
 
   # Ran whenever the object is hit
-  def hit
+  def hit (map)
     if @is_destroyable
       @health -= @damage_per_hit
 
       if @health <= 0
         @is_destroyed = true
         @is_ghost = true
+
+        update(map)
       end
     end
   end

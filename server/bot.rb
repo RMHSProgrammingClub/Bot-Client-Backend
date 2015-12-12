@@ -20,6 +20,7 @@ class Bot < Entity
     if @team == 2
       angle = 270
     end
+    @vision = Array.new
 
     super(x, y, angle, $BOT_HEALTH, true, false, $BOT_HIT_LOSS)
   end
@@ -54,7 +55,9 @@ class Bot < Entity
             entity_between = draw_line(@x.to_f, @y.to_f, cell.x.to_f, cell.y.to_f, map)
 
             if cell == entity_between
-              @vision << cell
+              if !@vision.include? cell
+                @vision << cell
+              end
             end
           end
         end
@@ -78,6 +81,8 @@ class Bot < Entity
 
       @x = new_x
       @y = new_y
+
+      update(map)
     end
   end
 
@@ -118,7 +123,7 @@ class Bot < Entity
     entity = draw_line_from_angle(@x, @y, @angle, map)
 
     if !entity.nil? and entity.team != @team
-      entity.hit
+      entity.hit(map)
     end
   end
 
@@ -175,14 +180,14 @@ class Bot < Entity
   # degrees = degrees to be converted to radians
   # returns radians
   def to_radians (degrees)
-    degrees * Math::PI / 180 
+    degrees * (3.14 / 180)
   end
 
   # Converts radians to degrees
   # radians = radians to be converted to degrees
   # returns degrees
   def to_degrees (radians)
-    radians * (180 / Math::PI)
+    radians * (180 / 3.14)
   end
 
   # Creates a line from two points and returns the first solid entity that it hits
@@ -200,8 +205,8 @@ class Bot < Entity
     while map.in_bounds(line_x, line_y)
       line_x = x1 + (slope * (line_y - y1))
 
-      entity = map.get(line_x.to_i, line_y.to_i)
-      if entity != self and !entity.is_ghost
+      entity = map.get(line_x, line_y)
+      if !entity.is_ghost and entity != self
         return entity
       end
 

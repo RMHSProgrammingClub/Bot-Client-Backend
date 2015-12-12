@@ -7,7 +7,7 @@ require_relative 'constants.rb'
 
 # The map class that controls all map operations
 class Map
-  attr_reader :map_array, :bots, :flags
+  attr_reader :map_array, :bots, :flags, :walls
 
   # Class initializer
   def initialize
@@ -116,16 +116,15 @@ class Map
     end
   end
 
-  # Updates every entities position and turns the map into a drawable string
+  # Updates turns the map into a drawable string
   # returns a string of the map in number
-  def update
+  def to_string
     #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall, 5 = flag
     new_drawable_map = ""
 
     for row in @map_array
       for cell in row
         new_drawable_map << cell.to_number.to_s
-        cell.update(self)
       end
     end
 
@@ -161,19 +160,35 @@ class Map
   # map = the map to add walls to
   # returns the map with walls
   def generate_walls (map)
+    @walls = Array.new
+
     #Build top and bottom walls
     col = 0
     while in_bounds(col, 0)
-      map[0][col] = Wall.new(col, 0)
-      map[$MAP_HEIGHT - 1][col] = Wall.new(col, $MAP_HEIGHT - 1)
+      wall1 = Wall.new(col, 0)
+      wall2 = Wall.new(col, $MAP_HEIGHT - 1)
+
+      map[0][col] = wall1
+      map[$MAP_HEIGHT - 1][col] = wall2
+
+      @walls << wall1
+      @walls << wall2
+
       col += 1
     end
 
     #Build side walls
     row = 0
     while in_bounds(0, row)
-      map[row][0] = Wall.new(0, row)
-      map[row][$MAP_WIDTH - 1] = Wall.new($MAP_WIDTH - 1, row)
+      wall1 = Wall.new(0, row)
+      wall2 = Wall.new($MAP_WIDTH - 1, row)
+
+      map[row][0] = wall1
+      map[row][$MAP_WIDTH - 1] = wall2
+
+      @walls << wall1
+      @walls << wall2
+
       row += 1
     end
 
