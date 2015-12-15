@@ -35,9 +35,9 @@ class Team
         if !bot.check_shoot(turn_number) then return false end
       when /TURN/
         if command.scan(/TURN/).length != 1 then return false end
-        degrees = command.split(" ")[1].to_i
-        if !check_ap(degrees / $TURN_COST) then return false end
-        if !bot.check_turn(degrees) then return false end
+        degrees = command.split(" ")[1]
+        if !check_ap((degrees.to_d / $TURN_COST).ceil) then return false end
+        if !bot.check_turn(degrees.to_i) then return false end
       when /PLACE/
         if command.scan(/PLACE/).length != 1 then return false end
         if !check_ap($PLACE_COST) then return false end
@@ -128,7 +128,7 @@ class Team
   # Check to see if bot has enough AP to carry out an action
   # cost = the cost of the specfic action
   def check_ap (cost)
-    if @ap - cost > 0
+    if @ap - cost >= 0
       true
     else
       false
@@ -138,7 +138,7 @@ class Team
   # Check to see if bot has enough mana to carry out an action
   # cost = the mana the action costs
   def check_mana (cost)
-    if @mana - cost > 0
+    if @mana - cost >= 0
       true
     else
       false
