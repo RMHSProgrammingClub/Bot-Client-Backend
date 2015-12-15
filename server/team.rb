@@ -25,6 +25,7 @@ class Team
   def check_bot_action (bot, command, map, turn_number)
     case command
       when /MOVE/
+        if command.scan(/MOVE/).length != 1 then return false end
         if !check_ap($MOVEMENT_COST) then return false end
         x = command.split(" ")[1].to_i
         y = command.split(" ")[2].to_i
@@ -33,10 +34,12 @@ class Team
         if !check_ap($SHOOT_COST) then return false end
         if !bot.check_shoot(turn_number) then return false end
       when /TURN/
+        if command.scan(/TURN/).length != 1 then return false end
         degrees = command.split(" ")[1].to_i
         if !check_ap(degrees / $TURN_COST) then return false end
         if !bot.check_turn(degrees) then return false end
       when /PLACE/
+        if command.scan(/PLACE/).length != 1 then return false end
         if !check_ap($PLACE_COST) then return false end
         if !check_mana($PLACE_MANA_COST) then return false end
         x = command.split(" ")[1].to_i

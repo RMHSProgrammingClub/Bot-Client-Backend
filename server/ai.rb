@@ -39,7 +39,7 @@ class AI
     @connection.send_data(bot)
 
     command = @connection.read_line
-    while command != "END" and @team.ap > 0
+    while !command.include?("END") and @team.ap > 0
       if @team.check_bot_action(bot, command, map, turn_number) # Only execute actions if the move is valid
         @team.execute_bot_action(bot_number, command, map)
 
