@@ -25,7 +25,7 @@ class Team
   def check_bot_action (bot, command, map, turn_number)
     case command
       when /MOVE/
-        if command.scan(/MOVE/).length != 1 then return false end
+        if check_command_numbers("MOVE") then return false end
         if !check_ap($MOVEMENT_COST) then return false end
         x = command.split(" ")[1].to_i
         y = command.split(" ")[2].to_i
@@ -34,12 +34,12 @@ class Team
         if !check_ap($SHOOT_COST) then return false end
         if !bot.check_shoot(turn_number) then return false end
       when /TURN/
-        if command.scan(/TURN/).length != 1 then return false end
-        degrees = command.split(" ")[1]
-        if !check_ap((degrees.to_d / $TURN_COST).ceil) then return false end
-        if !bot.check_turn(degrees.to_i) then return false end
+        if check_command_numbers("TURN") then return false end
+        degrees = command.split(" ")[1].to_i
+        if !check_ap((degrees.to_d / $TURN_COST).ceil) then return false end # Round up ap cost so 1 degree turn costs 1 ap
+        if !bot.check_turn(degrees) then return false end
       when /PLACE/
-        if command.scan(/PLACE/).length != 1 then return false end
+        if check_command_numbers("PLACE") then return false end
         if !check_ap($PLACE_COST) then return false end
         if !check_mana($PLACE_MANA_COST) then return false end
         x = command.split(" ")[1].to_i
@@ -79,7 +79,7 @@ class Team
         @bots[bot_number].shoot
       when /TURN/
         degrees = action.split(" ")[1].to_i
-        @ap -= degrees / $TURN_COST
+        @ap -= (degrees.to_d / $TURN_COST).ceil # Round up ap cost so 1 degree turn costs 1 ap
         @bots[bot_number].turn(degrees)
       when /PLACE/
         @ap -= $PLACE_COST
@@ -119,6 +119,16 @@ class Team
     end
 
     if map.get($MAP_WIDTH / 2, yPos).is_a? Air
+      true
+    else
+      false
+    end
+  end
+
+  # Check to see if there is only one command on a line
+  # command = the line sent from the client
+  def check_command_numbers (command)
+    if command.scan(command).length == 1
       true
     else
       false

@@ -94,6 +94,7 @@ class Bot < Entity
   # map = global map object
   # returns weither the action is valid
   def check_move (x, y, map)
+    # Check if -1 <= x <= 1 and the position the bot wants to be at is Air
     if x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_a? Air
       true
     else
@@ -133,6 +134,7 @@ class Bot < Entity
   # turn_number = the turn number of the game
   # returns weither the action is valid
   def check_shoot (turn_number)
+    # Make sure nobody shoots before $TURNS_INVULN is up
     if !turn_number.between?(0, $TURNS_INVULN)
       true
     else
