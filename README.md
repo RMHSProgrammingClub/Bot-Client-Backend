@@ -10,6 +10,7 @@ Using exploits that you find are legal *if*:
 - You report them to me (Jake Kinsella). Send it through an email so nobody else will alerted of the bug
 - You are given permission to use the bug. The only times we will patch the bug is if the exploit is to powerful, or it is really easy to implement, or if it crashes the server
 - You found this exploit out by yourself. If a exploit is found one the internet then it will be patched
-
+  
+If you are found to be using an exploit that is either illegal or unlisted then your match results will be invalidated.  
 All exploits are listed below (without giving away implementation). If you think you have found one check with me (Jake Kinsella) to be sure that it is new.  
 *No exploits have been found so far*
