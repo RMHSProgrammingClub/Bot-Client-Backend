@@ -33,7 +33,7 @@ class Team
         if !check_ap($SHOOT_COST) then return false end
         if !bot.check_shoot(turn_number) then return false end
       when /TURN/
-        degrees = command.split(" ").to_i
+        degrees = command.split(" ")[1].to_i
         if !check_ap($degrees / $TURN_COST) then return false end
         if !bot.check_turn(degrees) then return false end
       when /PLACE/
