@@ -75,7 +75,7 @@ class Team
         @ap -= $SHOOT_COST
         @bots[bot_number].shoot
       when /TURN/
-        degrees = action.split(" ").to_i
+        degrees = action.split(" ")[1].to_i
         @ap -= degrees / $TURN_COST
         @bots[bot_number].turn(degrees)
       when /PLACE/
