@@ -1,5 +1,3 @@
-require 'pry'
-
 require_relative 'entity.rb'
 require_relative 'constants.rb'
 
