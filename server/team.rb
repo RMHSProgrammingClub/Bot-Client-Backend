@@ -25,7 +25,7 @@ class Team
   def check_bot_action (bot, command, map, turn_number)
     case command
       when /MOVE/
-        if check_command_numbers("MOVE") then return false end
+        if !check_command_numbers("MOVE") then return false end
         if !check_ap($MOVEMENT_COST) then return false end
         x = command.split(" ")[1].to_i
         y = command.split(" ")[2].to_i
@@ -34,12 +34,12 @@ class Team
         if !check_ap($SHOOT_COST) then return false end
         if !bot.check_shoot(turn_number) then return false end
       when /TURN/
-        if check_command_numbers("TURN") then return false end
+        if !check_command_numbers("TURN") then return false end
         degrees = command.split(" ")[1].to_i
         if !check_ap((degrees.to_d / $TURN_COST).ceil) then return false end # Round up ap cost so 1 degree turn costs 1 ap
         if !bot.check_turn(degrees) then return false end
       when /PLACE/
-        if check_command_numbers("PLACE") then return false end
+        if !check_command_numbers("PLACE") then return false end
         if !check_ap($PLACE_COST) then return false end
         if !check_mana($PLACE_MANA_COST) then return false end
         x = command.split(" ")[1].to_i

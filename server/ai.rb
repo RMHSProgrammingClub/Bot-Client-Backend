@@ -39,11 +39,12 @@ class AI
     @connection.send_data(bot)
 
     command = @connection.read_line
+
+    turn_log << map.to_string
     while !command.include?("END") and @team.ap > 0
       if @team.check_bot_action(bot, command, map, turn_number) # Only execute actions if the move is valid
         @team.execute_bot_action(bot_number, command, map)
 
-        turn_log << map.to_string
         if command == "SHOOT"
           turn_log << bot.x.to_s + "," + bot.y.to_s + "," + bot.angle.to_s # Only sending start position and angle back
         end
