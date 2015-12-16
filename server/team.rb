@@ -48,9 +48,9 @@ class Team
       when /SPAWN/
         if !check_ap($SPAWN_COST) then return false end
         if !check_mana($SPAWN_MANA_COST) then return false end
-        x = action.split(" ")[1].to_i
-        y = action.split(" ")[2].to_i
-        if !check_spawn_bot(x, y, map) then return false end
+        x = command.split(" ")[1].to_i
+        y = command.split(" ")[2].to_i
+        if !check_spawn_bot(x, y, bot, map) then return false end
       else
         return false
     end
@@ -69,7 +69,7 @@ class Team
   # bot_number = the number of the bot in the bots array
   # action = the command that the client sent
   # map = the global map object
-  def execute_bot_action (bot_number, action, map)
+  def execute_bot_action (bot, action, map)
     case action
       when /MOVE/
         @ap -= $MOVEMENT_COST
@@ -94,7 +94,7 @@ class Team
         @mana -= $SPAWN_MANA_COST
         x = action.split(" ")[1].to_i
         y = action.split(" ")[2].to_i
-        spawn_bot(x, y, map)
+        spawn_bot(x, y, bot, map)
     end
   end
 
@@ -102,18 +102,18 @@ class Team
 
   # Spawns a new bot
   # map = the global map object
-  def spawn_bot (x, y, map)
-    bot = Bot.new(@number, @x + x, @y + y)
-    @bots << bot
-    map.set(@x + x, @y + y, bot)
-    map.bots << bot
-    bot.update(map)
+  def spawn_bot (x, y, bot, map)
+    new_bot = Bot.new(@number, bot.x + x, bot.y + y)
+    @bots << new_bot
+    map.set(new_bot.x, new_bot.y, new_bot)
+    map.bots << new_bot
+    new_bot.update(map)
   end
 
   # Check to see if bot is able spawn a new bot
   # map = the global map object
-  def check_spawn_bot (x, y, map)
-    if map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
+  def check_spawn_bot (x, y, bot, map)
+    if map.in_bounds(bot.x + x, bot.y + y) and map.get(bot.x + x, bot.y + y).is_ghost
       true
     else
       false
