@@ -15,7 +15,7 @@ class Bot < Entity
     @old_y = y
 
     angle = 90
-    if @team == 2
+    if @team == 1
       angle = 270
     end
     @vision = Array.new
@@ -125,8 +125,14 @@ class Bot < Entity
   def shoot (map)
     entity = draw_line_from_angle(@x, @y, @angle, map)
 
-    if !entity.nil? and entity.team != @team
-      entity.hit(map)
+    if !entity.nil?
+      if entity.is_a? Bot
+        if entity.team = @team
+          entity.hit(map)
+        end
+      else
+        entity.hit(map)
+      end
     end
   end
 

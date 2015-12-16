@@ -76,7 +76,7 @@ class Team
         @bots[bot_number].move(x, y, map)
       when "SHOOT"
         @ap -= $SHOOT_COST
-        @bots[bot_number].shoot
+        @bots[bot_number].shoot(map)
       when /TURN/
         degrees = action.split(" ")[1].to_i
         @ap -= (degrees.to_d / $TURN_COST).ceil # Round up ap cost so 1 degree turn costs 1 ap

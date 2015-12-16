@@ -82,13 +82,11 @@ class Game
 
       shot_log = ""
       while i < @turn_log.length and @turn_log[i].include?("SHOOT")
-        puts "Shoot"
-        shot_log << " " + @turn_log[i]
+        shot_log << @turn_log[i] + "\n"
         i += 1
       end
-      shot_log.sub!(" ", "") #Remove start space
 
-      string_turn_log << shot_log + "\n"
+      string_turn_log << shot_log
     end
 
     string_turn_log
