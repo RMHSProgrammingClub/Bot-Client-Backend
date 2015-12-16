@@ -17,4 +17,10 @@ class Block < Entity
   def to_number
     "3"
   end
+
+  # Update is only called when the block is first placed
+  # map = the global map object
+  def update (map)
+    map.set(@x, @y, self)
+  end
 end

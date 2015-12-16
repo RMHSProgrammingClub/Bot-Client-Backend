@@ -77,15 +77,13 @@ class Bot < Entity
     new_x = @x + x
     new_y = @y + y
 
-    if map.get(new_x, new_y).is_ghost
-      @old_x = @x
-      @old_y = @y
+    @old_x = @x
+    @old_y = @y
 
-      @x = new_x
-      @y = new_y
+    @x = new_x
+    @y = new_y
 
-      update(map)
-    end
+    update(map)
   end
 
   # Check to see if bot is able to move
@@ -95,7 +93,7 @@ class Bot < Entity
   # returns weither the action is valid
   def check_move (x, y, map)
     # Check if -1 <= x <= 1 and the position the bot wants to be at is Air
-    if x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_a? Air
+    if map.in_bounds(@x + x, @y + y) and x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_ghost
       true
     else
       false
@@ -153,9 +151,9 @@ class Bot < Entity
   # x = -1..1. Integer. The amount that the current x should be changed by to place the block
   # y = -1..1. Integer. The amount that the current y should be changed by to place the block
   def place_block (map, x, y)
-    if map.get(@x + x, @y + y).is_ghost
-      map.set(@x + x, @y + y, Block.new(@x + x, @y + y, true))
-    end
+    block = Block.new(@x + x, @y + y, true)
+    map.set(@x + x, @y + y, block)
+    block.update(map)
   end
 
   # Check to see if bot is able to place block
@@ -164,7 +162,7 @@ class Bot < Entity
   # y = the y position modifier
   # returns weither the action is valid
   def check_place (map, x, y)
-    if map.get(@x + x, @y + y).is_a? Air
+    if map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
       true
     else
       false

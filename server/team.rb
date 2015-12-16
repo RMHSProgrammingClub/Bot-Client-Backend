@@ -45,10 +45,12 @@ class Team
         x = command.split(" ")[1].to_i
         y = command.split(" ")[2].to_i
         if !bot.check_place(map, x, y) then return false end
-      when "SPAWN"
+      when /SPAWN/
         if !check_ap($SPAWN_COST) then return false end
         if !check_mana($SPAWN_MANA_COST) then return false end
-        if !check_spawn_bot(map) then return false end
+        x = action.split(" ")[1].to_i
+        y = action.split(" ")[2].to_i
+        if !check_spawn_bot(x, y, map) then return false end
       else
         return false
     end
@@ -87,10 +89,12 @@ class Team
         x = action.split(" ")[1].to_i
         y = action.split(" ")[2].to_i
         @bots[bot_number].place_block(map, x, y)
-      when "SPAWN"
+      when /SPAWN/
         @ap -= $SPAWN_COST
         @mana -= $SPAWN_MANA_COST
-        spawn_bot(@map)
+        x = action.split(" ")[1].to_i
+        y = action.split(" ")[2].to_i
+        spawn_bot(x, y, map)
     end
   end
 
@@ -98,27 +102,18 @@ class Team
 
   # Spawns a new bot
   # map = the global map object
-  def spawn_bot (map)
-    yPos = 10
-    if @number == 2
-      yPos = $MAP_HEIGHT - 10
-    end
-
-    bot = Bot.new(@number, $MAP_WIDTH / 2, yPos)
+  def spawn_bot (x, y, map)
+    bot = Bot.new(@number, @x + x, @y + y)
     @bots << bot
-    map.set($MAP_WIDTH / 2, yPos, bot)
-    map.bot << bot
+    map.set(@x + x, @y + y, bot)
+    map.bots << bot
+    bot.update(map)
   end
 
   # Check to see if bot is able spawn a new bot
   # map = the global map object
-  def check_spawn_bot (map)
-    yPos = 10
-    if @number == 2
-      yPos = $MAP_HEIGHT - 10
-    end
-
-    if map.get($MAP_WIDTH / 2, yPos).is_a? Air
+  def check_spawn_bot (x, y, map)
+    if map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
       true
     else
       false
