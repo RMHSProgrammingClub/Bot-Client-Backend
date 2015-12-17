@@ -36,7 +36,7 @@ class Team
       when /TURN/
         if !check_command_numbers("TURN") then return false end
         degrees = command.split(" ")[1].to_i
-        if !check_ap((degrees.to_d / $TURN_COST).ceil) then return false end # Round up ap cost so 1 degree turn costs 1 ap
+        if !check_ap((degrees.abs.to_d / $TURN_COST).ceil) then return false end # Round up ap cost so 1 degree turn costs 1 ap
         if !bot.check_turn(degrees) then return false end
       when /PLACE/
         if !check_command_numbers("PLACE") then return false end
@@ -81,7 +81,7 @@ class Team
         @bots[bot_number].shoot(map)
       when /TURN/
         degrees = action.split(" ")[1].to_i
-        @ap -= (degrees.to_d / $TURN_COST).ceil # Round up ap cost so 1 degree turn costs 1 ap
+        @ap -= (degrees.abs.to_d / $TURN_COST).ceil # Round up ap cost so 1 degree turn costs 1 ap
         @bots[bot_number].turn(degrees)
       when /PLACE/
         @ap -= $PLACE_COST
