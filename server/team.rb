@@ -75,20 +75,20 @@ class Team
         @ap -= $MOVEMENT_COST
         x = action.split(" ")[1].to_i
         y = action.split(" ")[2].to_i
-        @bots[bot_number].move(x, y, map)
+        bot.move(x, y, map)
       when "SHOOT"
         @ap -= $SHOOT_COST
-        @bots[bot_number].shoot(map)
+        bot.shoot(map)
       when /TURN/
         degrees = action.split(" ")[1].to_i
         @ap -= (degrees.abs.to_d / $TURN_COST).ceil # Round up ap cost so 1 degree turn costs 1 ap
-        @bots[bot_number].turn(degrees)
+        bot.turn(degrees)
       when /PLACE/
         @ap -= $PLACE_COST
         @mana -= $PLACE_MANA_COST
         x = action.split(" ")[1].to_i
         y = action.split(" ")[2].to_i
-        @bots[bot_number].place_block(map, x, y)
+        bot.place_block(map, x, y)
       when /SPAWN/
         @ap -= $SPAWN_COST
         @mana -= $SPAWN_MANA_COST
