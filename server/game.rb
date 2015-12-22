@@ -80,10 +80,15 @@ class Game
       string_turn_log << @turn_log[i] + "\n"
       i += 1
 
-      shot_log = "\n"
-      while i < @turn_log.length and @turn_log[i].include?("SHOOT")
+      shot_log = ""
+      while i < @turn_log.length and @turn_log[i].include?(",")
         shot_log << @turn_log[i] + "\n"
+
         i += 1
+      end
+
+      if shot_log == ""
+        shot_log << "\n"
       end
 
       string_turn_log << shot_log

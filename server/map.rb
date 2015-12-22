@@ -4,6 +4,7 @@ require_relative 'wall.rb'
 require_relative 'flag.rb'
 require_relative 'bot.rb'
 require_relative 'constants.rb'
+require 'pry'
 
 # The map class that controls all map operations
 class Map
@@ -65,14 +66,23 @@ class Map
   # y = the y position
   # value = the object that the point is set to
   def set (x, y, value)
-    @map_array[y][x] = value # y then x because the array is formatted row (y) and then column (x)
+    if in_bounds(x, y)
+      @map_array[y][x] = value # y then x because the array is formatted row (y) and then column (x)
+    else
+      binding.pry
+      abort("Something tried to move way outside to map")
+    end
   end
 
   # Makes a point air
   # x = the x position
   # y = the y position
   def clear (x, y)
-    set(x, y, Air.new(x, y))
+    if in_bounds(x, y)
+      set(x, y, Air.new(x, y))
+    else
+      abort("Something tried to move way outside to map")
+    end
   end
 
   # Generates the starting map with walls, bots, and flags
@@ -164,7 +174,7 @@ class Map
 
     #Build top and bottom walls
     col = 0
-    while in_bounds(col, 0)
+    while in_x_bounds(col)
       wall1 = Wall.new(col, 0)
       wall2 = Wall.new(col, $MAP_HEIGHT - 1)
 
@@ -179,7 +189,7 @@ class Map
 
     #Build side walls
     row = 0
-    while in_bounds(0, row)
+    while in_y_bounds(row)
       wall1 = Wall.new(0, row)
       wall2 = Wall.new($MAP_WIDTH - 1, row)
 

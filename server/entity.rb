@@ -32,7 +32,7 @@ class Entity
         @is_destroyed = true
         @is_ghost = true
 
-        update(map)
+        # Map should get updated automatically because ruby is pass by reference
       end
     end
   end
