@@ -38,7 +38,14 @@ class Game
       @turn_number += 1
     end
 
-    @turn_log << @map.to_string # Update map once more because changes to be map are not reflected until the second update
+    prev_map = ""
+    for turn in @turn_log.reverse # Start at end of turn log
+      if !turn.include?(",") # Only maps
+        prev_map = turn
+      end
+    end
+    
+    @turn_log << @map.to_string(prev_map) # Update map once more because changes to be map are not reflected until the second update
 
     if !@team1.flag.is_captured(@map) and @team2.flag.is_captured(@map)
       puts "Game ended with team 1 winning"

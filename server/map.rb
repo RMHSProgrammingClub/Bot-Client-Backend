@@ -8,11 +8,12 @@ require 'pry'
 
 # The map class that controls all map operations
 class Map
-  attr_reader :map_array, :bots, :flags, :walls
+  attr_reader :map_array, :map_changes, :bots, :flags, :walls
 
   # Class initializer
   def initialize
     @map_array = generate_map
+    @map_changes = Array.new
   end
 
   # Gets the entity from the map_array
@@ -68,6 +69,7 @@ class Map
   def set (x, y, value)
     if in_bounds(x, y)
       @map_array[y][x] = value # y then x because the array is formatted row (y) and then column (x)
+      @map_changes << value
     else
       binding.pry
       abort("Something tried to move way outside to map")
@@ -128,14 +130,27 @@ class Map
 
   # Updates turns the map into a drawable string
   # returns a string of the map in number
-  def to_string
+  def to_string (prev_string)
     #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall, 5 = flag
-    new_drawable_map = ""
-
-    for row in @map_array
-      for cell in row
-        new_drawable_map << cell.to_number
+    if prev_string.nil? # First run through
+      new_drawable_map = ""
+      for row in @map_array
+        for col in row
+          new_drawable_map << col.to_number
+        end
       end
+    else
+      new_drawable_map = prev_string
+
+      for change in @map_changes
+        new_index = change.x * change.y
+        old_index = change.old_x * change.old_y
+
+        new_drawable_map[new_index] = change.to_number
+        new_drawable_map[old_index] = "0" # TODO: only change to air if nothing else is there
+      end
+
+      @map_changes = Array.new
     end
 
     new_drawable_map

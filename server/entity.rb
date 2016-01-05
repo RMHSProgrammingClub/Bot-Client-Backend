@@ -2,7 +2,7 @@ require_relative 'constants.rb'
 
 # The superclass of all other entities
 class Entity
-  attr_reader :x, :y, :angle, :health, :is_destroyable, :is_destroyed, :is_ghost, :damage_per_hit
+  attr_reader :x, :y, :old_x, :old_y, :angle, :health, :is_destroyable, :is_destroyed, :is_ghost, :damage_per_hit
 
   # Class initializer
   # x = starting x position
@@ -15,6 +15,8 @@ class Entity
   def initialize (x, y, angle, health, is_destroyable, is_ghost, damage_per_hit)
     @x = x
     @y = y
+    @old_x = x
+    @old_y = y
     @angle = angle
     @health = health
     @is_destroyable = is_destroyable

@@ -11,8 +11,6 @@ class Bot < Entity
   # y = starting y position
   def initialize (team, x, y)
     @team = team
-    @old_x = x
-    @old_y = y
 
     angle = 90
     if @team == 1

@@ -40,7 +40,9 @@ class AI
 
     command = @connection.read_line
 
-    turn_log << map.to_string
+    prev_map = map.to_string(prev_map)
+
+    turn_log << prev_map
     while !command.include?("END") and @team.ap > 0
       if @team.check_bot_action(bot, command, map, turn_number) # Only execute actions if the move is valid
         @team.execute_bot_action(bot, command, map)
