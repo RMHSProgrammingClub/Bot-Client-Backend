@@ -1,3 +1,5 @@
+require_relative 'constants.rb'
+
 # The class the controls all communication between the server and the client
 class Connection
   attr_reader :socket
@@ -13,6 +15,12 @@ class Connection
   # Sends "START" and the team number to the client. This alerts the client so that it waits for its turn
   def start
     @client = @socket.accept
+    client_compliance = read_line # Check to make sure client is the correct version
+    if client_compliance != $SERVER_VERSION
+      write("Incorrect server compliance. Please update your api.")
+      abort("A client has the wrong server comlpiance")
+    end
+
     write("START")
     write(@team.number.to_s)
   end

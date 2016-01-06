@@ -1,3 +1,4 @@
+$SERVER_VERSION = "v1.0.5-beta" # The version of the server that the client must have compliance with
 $SOCKET_PORT = 2000 # The port of the socket server
 $MAP_WIDTH = 64 # The width of the map
 $MAP_HEIGHT = 128 # The height of the map
