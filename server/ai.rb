@@ -21,8 +21,9 @@ class AI
   end
 
   # Stop the client
-  def stop
-    @connection.close
+  # winner = the team number of the winner
+  def stop (winner)
+    @connection.stop(winner)
   end
 
   # Take a turn

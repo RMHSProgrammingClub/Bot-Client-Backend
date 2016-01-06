@@ -18,7 +18,15 @@ class Connection
   end
 
   # Closes the socket connection
-  def stop
+  def stop (winner)
+    if winner == @team.number
+      write("WIN")
+    elsif winner == 0 # Draw
+      write("DRAW")
+    else
+      write("LOSE")
+    end
+
     @client.close
   end
 

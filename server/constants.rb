@@ -1,7 +1,7 @@
 $SOCKET_PORT = 2000 # The port of the socket server
 $MAP_WIDTH = 64 # The width of the map
 $MAP_HEIGHT = 128 # The height of the map
-$NUM_BLOCKS = 20 # The number of random blocks that are generated
+$NUM_BLOCKS = 100 # The number of random blocks that are generated
 $MAX_TURNS = 100 # The max turns in a map
 $MAX_MANA = 100 # The starting mana amount
 $TURNS_INVULN = 3 # The number of turns that each bot cannot shoot

@@ -47,16 +47,23 @@ class Game
     
     @turn_log << @map.to_string(prev_map) # Update map once more because changes to be map are not reflected until the second update
 
+    winner = 1
     if !@team1.flag.is_captured(@map) and @team2.flag.is_captured(@map)
       puts "Game ended with team 1 winning"
       @turn_log << "WIN1"
+      winner = 1
     elsif @team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
       puts "Game ended with team 2 winning"
       @turn_log << "WIN2"
+      winner = 2
     else
       puts "Game ended in a draw"
       @turn_log << "DRAW"
+      winner = 0
     end
+
+    @ai1.stop(winner)
+    @ai2.stop(winner)
 
     puts "Processing turn log"
     game_data = process_turn_log
