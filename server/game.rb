@@ -27,7 +27,7 @@ class Game
   # Runs the game. Goes through each turn and then saves the turn log
   def run
     @turn_number = 0
-    while !@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
+    while !@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map) and @team1.bots.length > 0 and @team2.bots.length > 0
       if @turn_number >= $MAX_TURNS
         break
       else
@@ -48,11 +48,11 @@ class Game
     @turn_log << @map.to_string(prev_map) # Update map once more because changes to be map are not reflected until the second update
 
     winner = 1
-    if !@team1.flag.is_captured(@map) and @team2.flag.is_captured(@map)
+    if (!@team1.flag.is_captured(@map) and @team2.flag.is_captured(@map)) or @team2.bots.length <= 0
       puts "Game ended with team 1 winning"
       @turn_log << "WIN1"
       winner = 1
-    elsif @team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)
+    elsif (@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)) or @team1.bots.length <= 0
       puts "Game ended with team 2 winning"
       @turn_log << "WIN2"
       winner = 2
