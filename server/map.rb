@@ -4,7 +4,6 @@ require_relative 'wall.rb'
 require_relative 'flag.rb'
 require_relative 'bot.rb'
 require_relative 'constants.rb'
-require 'pry'
 
 # The map class that controls all map operations
 class Map
@@ -71,7 +70,6 @@ class Map
       @map_array[y][x] = value # y then x because the array is formatted row (y) and then column (x)
       @map_changes << value
     else
-      binding.pry
       abort("Something tried to move way outside to map")
     end
   end
