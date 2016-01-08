@@ -3,8 +3,7 @@ A game that is meant to be played by two computers. Based on the game played in 
   
 ###To-Do  
 - Enforce a turn timer on the AIs
-- Speed up the turn processing
-  
+
 ###Exploits  
 Using exploits that you find are legal *if*:  
 - You report them to me (Jake Kinsella). Send it through an email so nobody else will alerted of the bug
