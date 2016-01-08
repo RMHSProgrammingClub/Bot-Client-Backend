@@ -1,6 +1,12 @@
 # Bot-Server
 A game that is meant to be played by two computers. Based on the game played in _Ender's Game_
   
+###Building  
+To build a jar of the server you must first install jRuby and the Bundler gem.  
+Then you run `bundle install` to install all the project dependencies  
+To actually build the jar you run `rake build`  
+The server jar can now be found in the build directory  
+  
 ###To-Do  
 - Enforce a turn timer on the AIs
 
