@@ -3,14 +3,15 @@ require_relative 'constants.rb'
 
 # The class that all bots are created with. Has all the methods that a client could be able to call
 class Bot < Entity
-  attr_reader :team, :vision
+  attr_reader :team, :vision, :uid
 
   # Class initializer
   # team = the team number of the bot
   # x = starting x position
   # y = starting y position
-  def initialize (team, x, y)
+  def initialize (team, x, y, uid)
     @team = team
+    @uid = uid
 
     angle = 90
     if @team == 1

@@ -7,10 +7,11 @@ require_relative 'constants.rb'
 
 # The map class that controls all map operations
 class Map
-  attr_reader :map_array, :map_changes, :bots, :flags, :walls
+  attr_reader :map_array, :map_changes, :bots, :flags, :walls, :num_bots
 
   # Class initializer
   def initialize
+    @num_bots = 0
     @map_array = generate_map
     @map_changes = Array.new
   end
@@ -35,6 +36,12 @@ class Map
   # returns a flag
   def get_flag (team_number)
     @flags[team_number - 1]  #team 1 -> 0
+  end
+
+  # Gets the next uid for a bot
+  def next_bot_uid
+    @num_bots += 1
+    return @num_bots
   end
 
   # Get all entities (including air), that surronds a point
@@ -261,8 +268,8 @@ class Map
 
     i = 0
     while i < $NUM_BOTS
-      bots[0][i] = Bot.new(1, (i + 1) * $BOT_SPACING, $BOT_SPACING - 2)
-      bots[1][i] = Bot.new(2, ((i + 1) * $BOT_SPACING) + 2, $MAP_HEIGHT - $BOT_SPACING)
+      bots[0][i] = Bot.new(1, (i + 1) * $BOT_SPACING, $BOT_SPACING - 2, next_bot_uid)
+      bots[1][i] = Bot.new(2, ((i + 1) * $BOT_SPACING) + 2, $MAP_HEIGHT - $BOT_SPACING, next_bot_uid)
 
       map[bots[0][i].y][bots[0][i].x] = bots[0][i]
       map[bots[1][i].y][bots[1][i].x] = bots[1][i]

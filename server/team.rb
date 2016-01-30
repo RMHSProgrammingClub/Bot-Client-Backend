@@ -103,7 +103,7 @@ class Team
   # Spawns a new bot
   # map = the global map object
   def spawn_bot (x, y, bot, map)
-    new_bot = Bot.new(@number, bot.x + x, bot.y + y)
+    new_bot = Bot.new(@number, bot.x + x, bot.y + y, map.next_botuid)
     @bots << new_bot
     map.set(new_bot.x, new_bot.y, new_bot)
     map.bots << new_bot
