@@ -61,6 +61,7 @@ class Connection
   # bot = the bot object who's turn it is
   def send_data (bot)
     data = Hash.new
+    data["uid"] = bot.uid
     data["x"] = bot.x
     data["y"] = bot.y
     data["angle"] = bot.angle
