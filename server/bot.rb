@@ -43,27 +43,47 @@ class Bot < Entity
   # map = the global map object
   def calculate_vision (map)
     @vision = Array.new
-
-    leftmost_angle = @angle - ($FOV / 2)
-    rightmost_angle = @angle + ($FOV / 2)
-
+    
+    ba = @angle
+    if ba == -180
+      ba = 180
+    end
+    
     for row in map.map_array
       for cell in row
-        if !cell.is_ghost # If it is possible to walk through it then you cannot see it
-          angle_between = calculate_angle(@x, @y, cell.x, cell.y)
-
-          if angle_between.between?(leftmost_angle, rightmost_angle)
-            entity_between = draw_line(@x.to_f, @y.to_f, cell.x.to_f, cell.y.to_f, map)
-
-            if cell == entity_between
-              if !@vision.include? cell
-                @vision << cell
-              end
+        unless cell.is_ghost # you can't see spooky ghosts
+          
+          oa = Math.atan2(cell.y - @y, cell.x - @x)
+          if oa == -180
+            oa = 180
+          end
+          
+          if (ba.between?(-180, -90) and oa.between?(90, 180)) or (ba.between?(90, 180) and oa.between?(-180, -90))
+            if ba.between?(-180, -90)
+              ba += 90
+              ba = ba.abs
+            end
+            if ba.between?(90, 180)
+              oa += 90
+              oa = oa.abs
             end
           end
+          
+          diff = oa - ba
+          cansee = diff <= $FOV / 2
+          
+          if cansee
+            unless @vision.include? cell
+              @vision << cell
+            end
+          end
+          
         end
       end
     end
+    
+    return @vision
+    
   end
 
   # All actions assume that AP has already been calculated
