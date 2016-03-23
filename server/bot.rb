@@ -72,9 +72,11 @@ class Bot < Entity
           diff = oa - ba
           cansee = diff <= $FOV / 2
           
+          ray = draw_line_from_angle(@x, @y, oa, map)
+          
           if cansee
-            unless @vision.include? cell
-              @vision << cell
+            unless @vision.include? ray
+              @vision << ray
             end
           end
           
