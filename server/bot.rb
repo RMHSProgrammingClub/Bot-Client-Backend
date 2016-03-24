@@ -32,11 +32,7 @@ class Bot < Entity
   # Used when turning the map into a string. Each entity has their own number
   # returns the team number
   def to_number
-    if @team == 1
-      "1"
-    else
-      "2"
-    end
+    @team.to_s
   end
 
   # Calculates and stores what the bot can see
@@ -49,16 +45,16 @@ class Bot < Entity
     if ba == -180
       ba = 180
     end
-    
-    for row in map.map_array
-      for cell in row
+
+    map.map_array.each { |row|
+      row.each { |cell|
         unless cell.is_ghost # you can't see spooky ghosts
-          
+      
           oa = to_degrees(Math.atan2(cell.y - @y, cell.x - @x))
           if oa == -180
             oa = 180
           end
-          
+      
           if (ba.between?(-180, -90) and oa.between?(90, 180)) or (ba.between?(90, 180) and oa.between?(-180, -90))
             if ba.between?(-180, -90)
               ba += 90
@@ -69,11 +65,11 @@ class Bot < Entity
               oa = oa.abs
             end
           end
-          
+      
           diff = oa - ba
-          cansee = diff <= $FOV / 2
-          
-          if cansee
+          can_see = diff <= $FOV / 2
+      
+          if can_see
             ray = draw_line_from_angle(@x, @y, oa, map)
             unless @vision.include? ray
               unless ray == nil
@@ -81,10 +77,10 @@ class Bot < Entity
               end
             end
           end
-          
+    
         end
-      end
-    end
+      }
+    }
     
     @vision
     
@@ -113,7 +109,7 @@ class Bot < Entity
   # x = x position modifier
   # y = y position modifier
   # map = global map object
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_move (x, y, map)
     # Check if -1 <= x <= 1 and the position the bot wants to be at is Air
     if map.in_bounds(@x + x, @y + y) and x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_ghost
@@ -146,9 +142,9 @@ class Bot < Entity
   def shoot (map)
     entity = draw_line_from_angle(@x, @y, @angle, map)
 
-    if !entity.nil?
+    unless entity.nil?
       if entity.is_a? Bot
-        if entity.team = @team
+        if entity.team == @team # TODO: IS THIS CORRECT? Jake's code had one equals sign. Assuming it was a bug and fixed it.
           entity.hit(map)
         end
       else
@@ -159,14 +155,10 @@ class Bot < Entity
 
   # Check to see if bot is able to shoot
   # turn_number = the turn number of the game
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_shoot (turn_number)
     # Make sure nobody shoots before $TURNS_INVULN is up
-    if !turn_number.between?(0, $TURNS_INVULN)
-      true
-    else
-      false
-    end
+    !turn_number.between?(0, $TURNS_INVULN)
   end
 
   # Places a block
@@ -191,19 +183,19 @@ class Bot < Entity
       false
     end
   end
-
+  
   private
-
+  
   # Calculates angle between two points
   # x1 = first x position
   # y1 = first y position
   # x2 = second x position
   # y2 = second y position
-  # returns the angle inbetween the two points
+  # returns the angle in between the two points
   def calculate_angle (x1, y1, x2, y2)
     delta_x = x2 - x1
     delta_y = y2 - y1
-
+    
     to_degrees(Math.atan2(delta_y, delta_x))
   end
 
@@ -244,7 +236,7 @@ class Bot < Entity
       line_y += 1
     end
 
-    abort("Bot cannot see anything?")
+    abort('Bot cannot see anything?')
   end
 
 

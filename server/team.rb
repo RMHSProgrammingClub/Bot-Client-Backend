@@ -21,36 +21,36 @@ class Team
   # bot = the bot
   # command = the command that the client sent
   # turn_number = the turn number of the game
-  # returns weither the command is legal
+  # returns whether the command is legal
   def check_bot_action (bot, command, map, turn_number)
     case command
       when /MOVE/
-        if !check_command_numbers("MOVE") then return false end
-        if !check_ap($MOVEMENT_COST) then return false end
-        x = command.split(" ")[1].to_i
-        y = command.split(" ")[2].to_i
-        if !bot.check_move(x, y, map) then return false end
-      when "SHOOT"
-        if !check_ap($SHOOT_COST) then return false end
-        if !bot.check_shoot(turn_number) then return false end
+        unless check_command_numbers('MOVE') then return false end
+        unless check_ap($MOVEMENT_COST) then return false end
+        x = command.split(' ')[1].to_i
+        y = command.split(' ')[2].to_i
+        unless bot.check_move(x, y, map) then return false end
+      when 'SHOOT'
+        unless check_ap($SHOOT_COST) then return false end
+        unless bot.check_shoot(turn_number) then return false end
       when /TURN/
-        if !check_command_numbers("TURN") then return false end
-        degrees = command.split(" ")[1].to_i
-        if !check_ap((degrees.abs.to_d / $TURN_COST).ceil) then return false end # Round up ap cost so 1 degree turn costs 1 ap
-        if !bot.check_turn(degrees) then return false end
+        unless check_command_numbers("TURN") then return false end
+        degrees = command.split(' ')[1].to_i
+        unless check_ap((degrees.abs.to_d / $TURN_COST).ceil) then return false end # Round up ap cost so 1 degree turn costs 1 ap
+        unless bot.check_turn(degrees) then return false end
       when /PLACE/
-        if !check_command_numbers("PLACE") then return false end
-        if !check_ap($PLACE_COST) then return false end
-        if !check_mana($PLACE_MANA_COST) then return false end
-        x = command.split(" ")[1].to_i
-        y = command.split(" ")[2].to_i
-        if !bot.check_place(map, x, y) then return false end
+        unless check_command_numbers('PLACE') then return false end
+        unless check_ap($PLACE_COST) then return false end
+        unless check_mana($PLACE_MANA_COST) then return false end
+        x = command.split(' ')[1].to_i
+        y = command.split(' ')[2].to_i
+        unless bot.check_place(map, x, y) then return false end
       when /SPAWN/
-        if !check_ap($SPAWN_COST) then return false end
-        if !check_mana($SPAWN_MANA_COST) then return false end
-        x = command.split(" ")[1].to_i
-        y = command.split(" ")[2].to_i
-        if !check_spawn_bot(x, y, bot, map) then return false end
+        unless check_ap($SPAWN_COST) then return false end
+        unless check_mana($SPAWN_MANA_COST) then return false end
+        x = command.split(' ')[1].to_i
+        y = command.split(' ')[2].to_i
+        unless check_spawn_bot(x, y, bot, map) then return false end
       else
         return false
     end
@@ -73,28 +73,30 @@ class Team
     case action
       when /MOVE/
         @ap -= $MOVEMENT_COST
-        x = action.split(" ")[1].to_i
-        y = action.split(" ")[2].to_i
+        x = action.split(' ')[1].to_i
+        y = action.split(' ')[2].to_i
         bot.move(x, y, map)
       when "SHOOT"
         @ap -= $SHOOT_COST
         bot.shoot(map)
       when /TURN/
-        degrees = action.split(" ")[1].to_i
+        degrees = action.split(' ')[1].to_i
         @ap -= (degrees.abs.to_d / $TURN_COST).ceil # Round up ap cost so 1 degree turn costs 1 ap
         bot.turn(degrees)
       when /PLACE/
         @ap -= $PLACE_COST
         @mana -= $PLACE_MANA_COST
-        x = action.split(" ")[1].to_i
-        y = action.split(" ")[2].to_i
+        x = action.split(' ')[1].to_i
+        y = action.split(' ')[2].to_i
         bot.place_block(map, x, y)
       when /SPAWN/
         @ap -= $SPAWN_COST
         @mana -= $SPAWN_MANA_COST
-        x = action.split(" ")[1].to_i
-        y = action.split(" ")[2].to_i
+        x = action.split(' ')[1].to_i
+        y = action.split(' ')[2].to_i
         spawn_bot(x, y, bot, map)
+      else
+        puts 'Invalid action ' + action.to_s # the to_s just to be safe in a not strong typed lang
     end
   end
 
@@ -103,7 +105,7 @@ class Team
   # Spawns a new bot
   # map = the global map object
   def spawn_bot (x, y, bot, map)
-    new_bot = Bot.new(@number, bot.x + x, bot.y + y, map.next_botuid)
+    new_bot = Bot.new(@number, bot.x + x, bot.y + y, map.next_bot_uid)
     @bots << new_bot
     map.set(new_bot.x, new_bot.y, new_bot)
     map.bots << new_bot
@@ -131,7 +133,7 @@ class Team
   end
 
   # Check to see if bot has enough AP to carry out an action
-  # cost = the cost of the specfic action
+  # cost = the cost of the specific action
   def check_ap (cost)
     if @ap - cost >= 0
       true

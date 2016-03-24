@@ -17,24 +17,24 @@ class Connection
     @client = @socket.accept
     client_compliance = read_line # Check to make sure client is the correct version
     if client_compliance != $SERVER_VERSION
-      write("Incorrect server compliance. Please update your api.")
-      abort("A client has the wrong server comlpiance")
+      write('Incorrect server compliance. Please update your api.')
+      abort('A client has the wrong server compliance')
     end
 
-    write("START")
+    write('START')
     write(@team.number.to_s)
   end
 
   # Closes the socket connection
   def stop (winner)
-    write("END")
+    write('END')
     
     if winner == @team.number
-      write("WIN")
+      write('WIN')
     elsif winner == 0 # Draw
-      write("DRAW")
+      write('DRAW')
     else
-      write("LOSE")
+      write('LOSE')
     end
 
     @client.close
@@ -42,7 +42,7 @@ class Connection
 
   # Sends "START_TURN" to the client. This alerts the client so that it listens for the turn datas
   def start_turn
-    write("START_TURN")
+    write('START_TURN')
   end
 
   # Reads a line from the client
@@ -61,14 +61,14 @@ class Connection
   # bot = the bot object who's turn it is
   def send_data (bot)
     data = Hash.new
-    data["uid"] = bot.uid
-    data["x"] = bot.x
-    data["y"] = bot.y
-    data["angle"] = bot.angle
-    data["health"] = bot.health
-    data["ap"] = @team.ap
-    data["mana"] = @team.mana
-    data["vision"] = process_vision(bot.vision)
+    data['uid'] = bot.uid
+    data['x'] = bot.x
+    data['y'] = bot.y
+    data['angle'] = bot.angle
+    data['health'] = bot.health
+    data['ap'] = @team.ap
+    data['mana'] = @team.mana
+    data['vision'] = process_vision(bot.vision)
 
     json = JSON.generate(data)
 
@@ -83,31 +83,31 @@ class Connection
   def process_vision (vision_array)
     output = Array.new
 
-    for entity in vision_array
+    vision_array.each { |entity|
       entry = Hash.new
-
-      entry["type"] = ""
+  
+      entry['type'] = ''
       unless entity.is_destroyed
         if entity.is_a? Bot
-          entry["type"] = "BOT"
-          entry["team"] = entity.team
+          entry['type'] = 'BOT'
+          entry['team'] = entity.team
         elsif entity.is_a? Wall
-          entry["type"] = "WALL"
+          entry['type'] = 'WALL'
         elsif entity.is_a? Block and !entity.is_a? Wall # Wall is an subclass of block
-          entry["type"] = "BLOCK"
+          entry['type'] = 'BLOCK'
         elsif entity.is_a? Flag
-          entry["type"] = "FLAG"
-          entry["team"] = entity.team
+          entry['type'] = 'FLAG'
+          entry['team'] = entity.team
         end
       end
-
-      entry["x"] = entity.x
-      entry["y"] = entity.y
-      entry["angle"] = entity.angle
-      entry["health"] = entity.health
-
+  
+      entry['x'] = entity.x
+      entry['y'] = entity.y
+      entry['angle'] = entity.angle
+      entry['health'] = entity.health
+  
       output << entry
-    end
+    }
 
     output
   end

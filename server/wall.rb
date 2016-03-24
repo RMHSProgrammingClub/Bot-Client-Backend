@@ -13,6 +13,6 @@ class Wall < Block
   # Used when turning the map into a string. Each entity has their own number
   # returns 4
   def to_number
-    "4"
+    '4'
   end
 end
