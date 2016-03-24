@@ -87,12 +87,12 @@ class Connection
       entry = Hash.new
 
       entry["type"] = ""
-      if !entity.is_destroyed
+      unless entity.is_destroyed
         if entity.is_a? Bot
           entry["type"] = "BOT"
           entry["team"] = entity.team
         elsif entity.is_a? Wall
-          entry["type"] =  "WALL"
+          entry["type"] = "WALL"
         elsif entity.is_a? Block and !entity.is_a? Wall # Wall is an subclass of block
           entry["type"] = "BLOCK"
         elsif entity.is_a? Flag

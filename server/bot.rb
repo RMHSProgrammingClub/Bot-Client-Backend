@@ -45,6 +45,7 @@ class Bot < Entity
     @vision = Array.new
     
     ba = @angle
+    ba -= 180 # set it between -180 and 180
     if ba == -180
       ba = 180
     end
@@ -53,7 +54,7 @@ class Bot < Entity
       for cell in row
         unless cell.is_ghost # you can't see spooky ghosts
           
-          oa = Math.atan2(cell.y - @y, cell.x - @x)
+          oa = to_degrees(Math.atan2(cell.y - @y, cell.x - @x))
           if oa == -180
             oa = 180
           end
@@ -72,11 +73,12 @@ class Bot < Entity
           diff = oa - ba
           cansee = diff <= $FOV / 2
           
-          ray = draw_line_from_angle(@x, @y, oa, map)
-          
           if cansee
+            ray = draw_line_from_angle(@x, @y, oa, map)
             unless @vision.include? ray
-              @vision << ray
+              unless ray == nil
+                @vision << ray
+              end
             end
           end
           
@@ -84,7 +86,7 @@ class Bot < Entity
       end
     end
     
-    return @vision
+    @vision
     
   end
 
