@@ -40,34 +40,48 @@ class Bot < Entity
   def calculate_vision (map)
     @vision = Array.new
     
-    ba = @angle
-    ba -= 180 # set it between -180 and 180
-    if ba == -180
-      ba = 180
-    end
-
     map.map_array.each { |row|
       row.each { |cell|
         unless cell.is_ghost # you can't see spooky ghosts
-      
-          oa = to_degrees(Math.atan2(cell.y - @y, cell.x - @x))
+          
+          ba = @angle
+          
+          ba -= 180 # set it between -180 and 180
+          if ba == -180
+            ba = 180
+          end
+          ba += 180
+          
+          unless ba.between?(0, 360)
+            puts 'BOT ANGLE ERROR: ' + ba.to_s
+          end
+          
+          oa = to_degrees(Math.atan2(@y - cell.x, cell.x - @x))
           if oa == -180
             oa = 180
           end
-      
-          if (ba.between?(-180, -90) and oa.between?(90, 180)) or (ba.between?(90, 180) and oa.between?(-180, -90))
-            if ba.between?(-180, -90)
-              ba += 90
-              ba = ba.abs
+          oa += 180
+
+          unless oa.between?(0, 360)
+            puts 'OBJECT ANGLE ERROR: ' + oa.to_s
+          end
+          
+          if (ba.between?(360 - $FOV, 360) and oa.between?(0, $FOV)) or (ba.between?(0, $FOV) and oa.between?(360 - $FOV, 360))
+            if ba.between?(360 - $FOV, 360)
+              ba -= 360
+              # ba = ba.abs
             end
-            if ba.between?(90, 180)
-              oa += 90
-              oa = oa.abs
+            if ba.between?(0, $FOV)
+              oa -= 360
+              # oa = oa.abs
             end
           end
-      
-          diff = oa - ba
-          can_see = diff <= $FOV / 2
+          
+          diff = (oa - ba).abs
+  
+          # puts oa.to_s + ' - ' + ba.to_s + ' = ' + diff.to_s
+  
+          can_see = diff <= $FOV
       
           if can_see
             ray = draw_line_from_angle(@x, @y, oa, map)
@@ -112,11 +126,7 @@ class Bot < Entity
   # returns whether the action is valid
   def check_move (x, y, map)
     # Check if -1 <= x <= 1 and the position the bot wants to be at is Air
-    if map.in_bounds(@x + x, @y + y) and x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_ghost
-      true
-    else
-      false
-    end
+    map.in_bounds(@x + x, @y + y) and x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_ghost
   end
 
   # Called when the client sends "TURN". Turns the bot
@@ -130,11 +140,7 @@ class Bot < Entity
   # degrees = degrees to turn by
   # returns weither the action is valid
   def check_turn (degrees)
-    if degrees != 0
-      true
-    else
-      false
-    end
+    degrees != 0
   end
 
   # Called when the client sends "SHOOT". Shoots in the direction that the bot is facing
@@ -177,11 +183,7 @@ class Bot < Entity
   # y = the y position modifier
   # returns weither the action is valid
   def check_place (map, x, y)
-    if map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
-      true
-    else
-      false
-    end
+    map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
   end
   
   private
