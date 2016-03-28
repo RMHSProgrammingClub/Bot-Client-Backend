@@ -16,7 +16,7 @@ class Flag < Entity
 
   # Checks if the flag has been captured
   # map = the global class object
-  # returns weither the flag has been captured or not
+  # returns whether the flag has been captured or not
   def is_captured (map)
     entities = map.get_surrounding_entities(@x, @y)
 
@@ -27,11 +27,7 @@ class Flag < Entity
       end
     end
 
-    if surrounding_bots >= $BOTS_TO_WIN
-      true
-    else
-      false
-    end
+    surrounding_bots >= $BOTS_TO_WIN
   end
 
   # Used when turning the map into a string. Each entity has their own number

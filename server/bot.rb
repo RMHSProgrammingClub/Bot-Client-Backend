@@ -1,5 +1,6 @@
 require_relative 'entity.rb'
 require_relative 'constants.rb'
+require_relative 'maths.rb'
 
 # The class that all bots are created with. Has all the methods that a client could be able to call
 class Bot < Entity
@@ -40,62 +41,35 @@ class Bot < Entity
   def calculate_vision (map)
     @vision = Array.new
     
+    ba = @angle
+    
+    # finds the edges of what we can see
+    p1 = TrianglePoint.new(@x, @y)
+    p2 = calc_triangle_point(@x, @y, ba + $FOV / 2)
+    p3 = calc_triangle_point(@x, @y, ba - $FOV / 2)
+    
     map.map_array.each { |row|
       row.each { |cell|
         unless cell.is_ghost # you can't see spooky ghosts
           
-          ba = @angle
-          
-          ba -= 180 # set it between -180 and 180
-          if ba == -180
-            ba = 180
-          end
-          ba += 180
-          
-          unless ba.between?(0, 360)
-            puts 'BOT ANGLE ERROR: ' + ba.to_s
-          end
-          
-          oa = to_degrees(Math.atan2(@y - cell.x, cell.x - @x))
-          if oa == -180
-            oa = 180
-          end
-          oa += 180
-
-          unless oa.between?(0, 360)
-            puts 'OBJECT ANGLE ERROR: ' + oa.to_s
-          end
-          
-          if (ba.between?(360 - $FOV, 360) and oa.between?(0, $FOV)) or (ba.between?(0, $FOV) and oa.between?(360 - $FOV, 360))
-            if ba.between?(360 - $FOV, 360)
-              ba -= 360
-              # ba = ba.abs
-            end
-            if ba.between?(0, $FOV)
-              oa -= 360
-              # oa = oa.abs
-            end
-          end
-          
-          diff = (oa - ba).abs
-  
-          # puts oa.to_s + ' - ' + ba.to_s + ' = ' + diff.to_s
-  
-          can_see = diff <= $FOV
-      
-          if can_see
+          if point_in_triangle(TrianglePoint.new(cell.x, cell.y), p1, p2, p3)
+            oa = to_degrees(Math.atan2(@y - cell.x, cell.x - @x))
+            
             ray = draw_line_from_angle(@x, @y, oa, map)
+            
             unless @vision.include? ray
-              unless ray == nil
+              unless ray.nil?
                 @vision << ray
               end
             end
+            
           end
-    
+          
         end
       }
     }
     
+    # This isn't used?
     @vision
     
   end
@@ -138,7 +112,7 @@ class Bot < Entity
 
   # Check to see if bot is able to turn
   # degrees = degrees to turn by
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_turn (degrees)
     degrees != 0
   end
@@ -181,7 +155,7 @@ class Bot < Entity
   # map = the global map object
   # x = the x position modifier
   # y = the y position modifier
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_place (map, x, y)
     map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
   end
@@ -264,4 +238,26 @@ class Bot < Entity
       line_y += dy
     end
   end
+
+  # Creates a line from an angle and returns the point for the triangle
+  # x = the start x
+  # y = the start y
+  # angle = the angle to draw the line at
+  # map = the global map object
+  # returns the point for the triangle
+  def calc_triangle_point (x, y, angle)
+    dx = Math.cos(to_radians(angle))
+    dy = -Math.sin(to_radians(angle))
+    line_x = x
+    line_y = y
+
+    until line_x > $VIEW_DISTANCE or line_y > $VIEW_DISTANCE or line_x < -$VIEW_DISTANCE or line_y < -$VIEW_DISTANCE # should only be height - viewdistance (or w whichever is mlarger)
+      line_x += dx
+      line_y += dy
+    end
+
+    TrianglePoint.new(line_x, line_y)
+    
+  end
+  
 end
