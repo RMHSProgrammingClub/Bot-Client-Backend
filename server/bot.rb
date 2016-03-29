@@ -1,5 +1,6 @@
 require_relative 'entity.rb'
 require_relative 'constants.rb'
+require_relative 'maths.rb'
 
 # The class that all bots are created with. Has all the methods that a client could be able to call
 class Bot < Entity
@@ -32,38 +33,66 @@ class Bot < Entity
   # Used when turning the map into a string. Each entity has their own number
   # returns the team number
   def to_number
-    if @team == 1
-      "1"
-    else
-      "2"
-    end
+    @team.to_s
   end
 
   # Calculates and stores what the bot can see
   # map = the global map object
   def calculate_vision (map)
     @vision = Array.new
-
-    leftmost_angle = @angle - ($FOV / 2)
-    rightmost_angle = @angle + ($FOV / 2)
-
-    for row in map.map_array
-      for cell in row
-        if !cell.is_ghost # If it is possible to walk through it then you cannot see it
-          angle_between = calculate_angle(@x, @y, cell.x, cell.y)
-
-          if angle_between.between?(leftmost_angle, rightmost_angle)
-            entity_between = draw_line(@x.to_f, @y.to_f, cell.x.to_f, cell.y.to_f, map)
-
-            if cell == entity_between
-              if !@vision.include? cell
-                @vision << cell
+    
+    # ba = @angle
+    
+=begin
+    # finds the edges of what we can see
+    p1 = TrianglePoint.new(@x, @y)
+    p2 = calc_triangle_point(@x, @y, ba + $FOV / 2)
+    p3 = calc_triangle_point(@x, @y, ba - $FOV / 2)
+    
+    map.map_array.each { |row|
+      row.each { |cell|
+        unless cell.is_ghost # you can't see spooky ghosts
+          
+          if point_in_triangle(TrianglePoint.new(cell.x, cell.y), p1, p2, p3)
+            oa = to_degrees(Math.atan2(@y - cell.x, cell.x - @x))
+            
+            ray = draw_line_from_angle(@x, @y, oa, map)
+            
+            unless @vision.include? ray
+              unless ray.nil?
+                @vision << ray
               end
             end
+            
           end
+          
         end
-      end
-    end
+      }
+    }
+=end
+    map.map_array.each { |row|
+      row.each { |cell|
+        unless cell.is_ghost # you can't see spooky ghosts
+          
+          dx = @x - cell.x
+          dy = @y - cell.y
+          
+          dx **= 2
+          dy **= 2
+          
+          d = Math.sqrt(dx + dy)
+          
+          if d <= $VIEW_DISTANCE
+            @vision << cell
+          end
+          
+        end
+      }
+    }
+    
+    # This isn't used?
+    @vision
+    
   end
 
   # All actions assume that AP has already been calculated
@@ -89,14 +118,10 @@ class Bot < Entity
   # x = x position modifier
   # y = y position modifier
   # map = global map object
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_move (x, y, map)
     # Check if -1 <= x <= 1 and the position the bot wants to be at is Air
-    if map.in_bounds(@x + x, @y + y) and x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_ghost
-      true
-    else
-      false
-    end
+    map.in_bounds(@x + x, @y + y) and x.between?(-1, 1) and y.between?(-1, 1) and map.get(@x + x, @y + y).is_ghost
   end
 
   # Called when the client sends "TURN". Turns the bot
@@ -108,13 +133,9 @@ class Bot < Entity
 
   # Check to see if bot is able to turn
   # degrees = degrees to turn by
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_turn (degrees)
-    if degrees != 0
-      true
-    else
-      false
-    end
+    degrees != 0
   end
 
   # Called when the client sends "SHOOT". Shoots in the direction that the bot is facing
@@ -122,9 +143,9 @@ class Bot < Entity
   def shoot (map)
     entity = draw_line_from_angle(@x, @y, @angle, map)
 
-    if !entity.nil?
+    unless entity.nil?
       if entity.is_a? Bot
-        if entity.team = @team
+        if entity.team == @team # TODO: IS THIS CORRECT? Jake's code had one equals sign. Assuming it was a bug and fixed it.
           entity.hit(map)
         end
       else
@@ -135,14 +156,10 @@ class Bot < Entity
 
   # Check to see if bot is able to shoot
   # turn_number = the turn number of the game
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_shoot (turn_number)
     # Make sure nobody shoots before $TURNS_INVULN is up
-    if !turn_number.between?(0, $TURNS_INVULN)
-      true
-    else
-      false
-    end
+    !turn_number.between?(0, $TURNS_INVULN)
   end
 
   # Places a block
@@ -159,27 +176,23 @@ class Bot < Entity
   # map = the global map object
   # x = the x position modifier
   # y = the y position modifier
-  # returns weither the action is valid
+  # returns whether the action is valid
   def check_place (map, x, y)
-    if map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
-      true
-    else
-      false
-    end
+    map.in_bounds(@x + x, @y + y) and map.get(@x + x, @y + y).is_ghost
   end
-
+  
   private
-
+  
   # Calculates angle between two points
   # x1 = first x position
   # y1 = first y position
   # x2 = second x position
   # y2 = second y position
-  # returns the angle inbetween the two points
+  # returns the angle in between the two points
   def calculate_angle (x1, y1, x2, y2)
     delta_x = x2 - x1
     delta_y = y2 - y1
-
+    
     to_degrees(Math.atan2(delta_y, delta_x))
   end
 
@@ -220,7 +233,7 @@ class Bot < Entity
       line_y += 1
     end
 
-    abort("Bot cannot see anything?")
+    abort('Bot cannot see anything?')
   end
 
 
@@ -246,4 +259,26 @@ class Bot < Entity
       line_y += dy
     end
   end
+
+  # Creates a line from an angle and returns the point for the triangle
+  # x = the start x
+  # y = the start y
+  # angle = the angle to draw the line at
+  # map = the global map object
+  # returns the point for the triangle
+  def calc_triangle_point (x, y, angle)
+    dx = Math.cos(to_radians(angle))
+    dy = -Math.sin(to_radians(angle))
+    line_x = x
+    line_y = y
+
+    until line_x > $VIEW_DISTANCE or line_y > $VIEW_DISTANCE or line_x < -$VIEW_DISTANCE or line_y < -$VIEW_DISTANCE # should only be height - viewdistance (or w whichever is mlarger)
+      line_x += dx
+      line_y += dy
+    end
+
+    TrianglePoint.new(line_x, line_y)
+    
+  end
+  
 end

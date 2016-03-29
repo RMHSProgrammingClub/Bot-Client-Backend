@@ -44,12 +44,12 @@ class AI
     prev_map = map.to_string(prev_map)
 
     turn_log << prev_map
-    while !command.include?("END") and @team.ap > 0
+    while !command.include?('END') and @team.ap > 0
       if @team.check_bot_action(bot, command, map, turn_number) # Only execute actions if the move is valid
         @team.execute_bot_action(bot, command, map)
 
-        if command == "SHOOT"
-          turn_log << bot.x.to_s + "," + bot.y.to_s + "," + bot.angle.to_s # Only sending start position and angle back
+        if command == 'SHOOT'
+          turn_log << bot.x.to_s + ',' + bot.y.to_s + ',' + bot.angle.to_s # Only sending start position and angle back
         end
       else
         puts "Command: #{command} is not valid!"

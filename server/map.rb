@@ -41,14 +41,13 @@ class Map
   # Gets the next uid for a bot
   def next_bot_uid
     @num_bots += 1
-    return @num_bots
   end
 
   # Get all entities (including air), that surronds a point
   # x = the x position
   # y = the y position
   # returns an array of entities
-  def get_surronding_entities (x, y)
+  def get_surrounding_entities (x, y)
     entities = Array.new
     end_x = x + 1
     end_y = y + 1
@@ -77,7 +76,7 @@ class Map
       @map_array[y][x] = value # y then x because the array is formatted row (y) and then column (x)
       @map_changes << value
     else
-      abort("Something tried to move way outside to map")
+      abort('Something tried to move way outside to map')
     end
   end
 
@@ -88,7 +87,7 @@ class Map
     if in_bounds(x, y)
       set(x, y, Air.new(x, y))
     else
-      abort("Something tried to move way outside to map")
+      abort('Something tried to move way outside to map')
     end
   end
 
@@ -110,27 +109,15 @@ class Map
   # x = the x position (or the column)
   # y = the y position (or the row)
   def in_bounds (x, y)
-    if in_x_bounds(x) and in_y_bounds(y)
-      true
-    else
-      false
-    end
+    in_x_bounds(x) and in_y_bounds(y)
   end
 
   def in_x_bounds (x)
-    if x.between?(0, $MAP_WIDTH - 1)
-      true
-    else
-      false
-    end
+    x.between?(0, $MAP_WIDTH - 1)
   end
 
   def in_y_bounds (y)
-    if y.between?(0, $MAP_HEIGHT - 1)
-      true
-    else
-      false
-    end
+    y.between?(0, $MAP_HEIGHT - 1)
   end
 
   # Updates turns the map into a drawable string
@@ -139,21 +126,21 @@ class Map
     #0 = empty, 1 = team 1 bot, 2 = team 2 bot, 3 = block, 4 = wall, 5 = flag
     if prev_string.nil? # First run through
       new_drawable_map = ""
-      for row in @map_array
-        for col in row
+      @map_array.each { |row|
+        row.each { |col|
           new_drawable_map << col.to_number
-        end
-      end
+        }
+      }
     else
       new_drawable_map = prev_string
 
-      for change in @map_changes
+      @map_changes.each { |change|
         new_index = change.x * change.y
         old_index = change.old_x * change.old_y
-
+  
         new_drawable_map[new_index] = change.to_number
         new_drawable_map[old_index] = "0" # TODO: only change to air if nothing else is there
-      end
+      }
 
       @map_changes = Array.new
     end

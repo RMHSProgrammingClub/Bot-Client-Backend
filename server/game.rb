@@ -31,7 +31,7 @@ class Game
       if @turn_number >= $MAX_TURNS
         break
       else
-        puts "Running turn " + turn_number.to_s
+        puts 'Running turn ' + turn_number.to_s
         run_turn
       end
 
@@ -40,7 +40,7 @@ class Game
 
     prev_map = ""
     for turn in @turn_log.reverse # Start at end of turn log
-      if !turn.include?(",") # Only maps
+      unless turn.include?(',') # Only maps
         prev_map = turn
       end
     end
@@ -49,27 +49,27 @@ class Game
 
     winner = 1
     if (!@team1.flag.is_captured(@map) and @team2.flag.is_captured(@map)) or @team2.bots.length <= 0
-      puts "Game ended with team 1 winning"
-      @turn_log << "WIN1"
+      puts 'Game ended with team 1 winning'
+      @turn_log << 'WIN1'
       winner = 1
     elsif (@team1.flag.is_captured(@map) and !@team2.flag.is_captured(@map)) or @team1.bots.length <= 0
-      puts "Game ended with team 2 winning"
-      @turn_log << "WIN2"
+      puts 'Game ended with team 2 winning'
+      @turn_log << 'WIN2'
       winner = 2
     else
-      puts "Game ended in a draw"
-      @turn_log << "DRAW"
+      puts 'Game ended in a draw'
+      @turn_log << 'DRAW'
       winner = 0
     end
 
     @ai1.stop(winner)
     @ai2.stop(winner)
 
-    puts "Processing turn log"
+    puts 'Processing turn log'
     game_data = process_turn_log
 
-    puts "Saving turn log"
-    game_file = File.new("game.txt", "w")
+    puts 'Saving turn log'
+    game_file = File.new('game.txt', 'w')
     game_file.puts game_data
     game_file.close
   end
@@ -87,21 +87,21 @@ class Game
 
   # Turns the turn log into a savable string
   def process_turn_log
-    string_turn_log = ""
+    string_turn_log = ''
 
     i = 0
     while i < @turn_log.length
       string_turn_log << @turn_log[i] + "\n"
       i += 1
 
-      shot_log = ""
-      while i < @turn_log.length and @turn_log[i].include?(",")
+      shot_log = ''
+      while i < @turn_log.length and @turn_log[i].include?(',')
         shot_log << @turn_log[i] + "\n"
 
         i += 1
       end
 
-      if shot_log == ""
+      if shot_log == ''
         shot_log << "\n"
       end
 
