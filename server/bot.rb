@@ -41,8 +41,9 @@ class Bot < Entity
   def calculate_vision (map)
     @vision = Array.new
     
-    ba = @angle
+    # ba = @angle
     
+=begin
     # finds the edges of what we can see
     p1 = TrianglePoint.new(@x, @y)
     p2 = calc_triangle_point(@x, @y, ba + $FOV / 2)
@@ -63,6 +64,26 @@ class Bot < Entity
               end
             end
             
+          end
+          
+        end
+      }
+    }
+=end
+    map.map_array.each { |row|
+      row.each { |cell|
+        unless cell.is_ghost # you can't see spooky ghosts
+          
+          dx = @x - cell.x
+          dy = @y - cell.y
+          
+          dx **= 2
+          dy **= 2
+          
+          d = Math.sqrt(dx + dy)
+          
+          if d <= $VIEW_DISTANCE
+            @vision << cell
           end
           
         end
